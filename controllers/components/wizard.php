@@ -169,7 +169,7 @@ class WizardComponent extends Object {
 			if (method_exists($this->controller, '_beforeCancel')) {
 				$this->controller->_beforeCancel($this->_getExpectedStep());
 			}
-			$this->resetWizard();
+			$this->reset();
 			$this->controller->redirect($this->cancelUrl);
 		}
 		
@@ -178,14 +178,14 @@ class WizardComponent extends Object {
 				if (method_exists($this->controller, '_afterComplete')) {
 					$this->controller->_afterComplete();
 				}
-				$this->resetWizard();
+				$this->reset();
 				$this->controller->redirect($this->completeUrl);
 			}
 			
 			$this->autoReset = false;
 		} elseif ($step == 'reset') {
 			if (!$this->lockdown) {
-				$this->resetWizard();
+				$this->reset();
 			}
 		} else {
 			if ($this->_validStep($step)) {
@@ -213,7 +213,7 @@ class WizardComponent extends Object {
 							$this->redirect(current($this->steps));
 						} else {
 							$this->Session->write('Wizard.complete', $this->read());		
-							$this->resetWizard();
+							$this->reset();
 							
 							$this->controller->redirect($this->action);
 						}
@@ -237,7 +237,7 @@ class WizardComponent extends Object {
 		}
 	
 		if ($step != 'reset' && $this->autoReset) {
-			$this->resetWizard();
+			$this->reset();
 		}
 
 		$this->redirect();
