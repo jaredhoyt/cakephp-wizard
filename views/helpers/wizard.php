@@ -17,13 +17,12 @@
 class WizardHelper extends AppHelper {
 	var $helpers = array('Session','Html');
 	var $output = null;
-	
-	/**
-	 * undocumented function
-	 *
-	 * @param string $key optional key to retrieve the existing value
-	 * @return mixed data at config key (if key is passed)
-	 */
+/**
+ * undocumented function
+ *
+ * @param string $key optional key to retrieve the existing value
+ * @return mixed data at config key (if key is passed)
+ */
 	function config($key = null) {
 		if ($key == null) {
 			return $this->Session->read('Wizard.config');
@@ -36,17 +35,16 @@ class WizardHelper extends AppHelper {
 			}
 		}
 	}
-	
-	/**
-	 * undocumented function
-	 *
-	 * @param string $title 
-	 * @param string $step 
-	 * @param string $htmlAttributes 
-	 * @param string $confirmMessage 
-	 * @param string $escapeTitle 
-	 * @return string link to a specific step
-	 */
+/**
+ * undocumented function
+ *
+ * @param string $title 
+ * @param string $step 
+ * @param string $htmlAttributes 
+ * @param string $confirmMessage 
+ * @param string $escapeTitle 
+ * @return string link to a specific step
+ */
 	function link($title, $step = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
 		if ($step == null) {
 			$step = $title;
@@ -55,14 +53,13 @@ class WizardHelper extends AppHelper {
 		
 		return $this->Html->link($title, $wizardAction.$step, $htmlAttributes, $confirmMessage, $escapeTitle);
 	}
-	
-	/**
-	 * Retrieve the step number of the specified step name, or the active step
-	 *
-	 * @param string $step optional name of step
-	 * @param string $shiftIndex optional offset of returned array index. Default 1
-	 * @return string step number. Returns false if not found
-	 */
+/**
+ * Retrieve the step number of the specified step name, or the active step
+ *
+ * @param string $step optional name of step
+ * @param string $shiftIndex optional offset of returned array index. Default 1
+ * @return string step number. Returns false if not found
+ */
 	function stepNumber($step = null, $shiftIndex = 1) {
 		if ($step == null) {
 			$step = $this->config('activeStep');
@@ -76,17 +73,16 @@ class WizardHelper extends AppHelper {
 			return false;
 		}
 	}
-	
-	/**
-	 * Returns a set of html elements containing links for each step in the wizard. 
-	 *
-	 * @param string $titles 
-	 * @param string $attributes pass a value for 'wrap' to change the default tag used
-	 * @param string $htmlAttributes 
-	 * @param string $confirmMessage 
-	 * @param string $escapeTitle 
-	 * @return string
-	 */
+/**
+ * Returns a set of html elements containing links for each step in the wizard. 
+ *
+ * @param string $titles 
+ * @param string $attributes pass a value for 'wrap' to change the default tag used
+ * @param string $htmlAttributes 
+ * @param string $confirmMessage 
+ * @param string $escapeTitle 
+ * @return string
+ */
 	function progressMenu($titles = array(), $attributes = array(), $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
 		$wizardConfig = $this->config();
 		extract($wizardConfig);	
