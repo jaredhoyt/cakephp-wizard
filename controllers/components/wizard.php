@@ -158,6 +158,10 @@ class WizardComponent extends Object {
 		
 		$this->config('wizardAction', $this->wizardAction);
 		$this->config('steps', $this->steps);
+		
+		if (!in_array('Wizard.Wizard', $this->controller->helpers) && !array_key_exists('Wizard.Wizard', $this->controller->helpers)) {
+			$this->controller->helpers[] = 'Wizard.Wizard';
+		}
 	}
 /**
  * Main Component method.
