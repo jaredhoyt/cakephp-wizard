@@ -11,7 +11,6 @@
  * Licensed under The MIT License
  *
  * @writtenby		jaredhoyt
- * @lastmodified	Date: March 11, 2009
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */ 
 class WizardComponent extends Object {
