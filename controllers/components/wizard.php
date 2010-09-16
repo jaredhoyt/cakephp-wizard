@@ -139,12 +139,14 @@ class WizardComponent extends Object {
  * @param object $controller A reference to the instantiating controller object
  * @access public
  */
-	function initialize(&$controller) {
+	function initialize(&$controller, $settings = array()) {
 		$this->controller =& $controller;
 		
 		$this->_sessionKey	= $this->Session->check('Wizard.complete') ? 'Wizard.complete' : 'Wizard.' . $controller->name;
 		$this->_configKey 	= 'Wizard.config';
 		$this->_branchKey	= 'Wizard.branches.' . $controller->name;	
+		
+		$this->_set($settings);
 	}
 /**
  * Component startup method.
@@ -312,7 +314,7 @@ class WizardComponent extends Object {
 		if ($step == null) {
 			$step = $this->_getExpectedStep();
 		}
-		$url = array('controller' => $this->controller->name, 'action' => $this->wizardAction, $step);
+		$url = array('controller' => strtolower($this->controller->name), 'action' => $this->wizardAction, $step);
 		$this->controller->redirect($url, $status, $exit);
 	}
 /**
@@ -329,8 +331,8 @@ class WizardComponent extends Object {
  * @access public
  */		
 	function reset() {
-		$this->Session->del($this->_branchKey);
-		$this->Session->del($this->_sessionKey);
+		$this->Session->delete($this->_branchKey);
+		$this->Session->delete($this->_sessionKey);
 	}
 /**
  * Saves the data from the current step into the Session.
@@ -350,7 +352,7 @@ class WizardComponent extends Object {
  * @access public
  */	
 	function unbranch($branch) {
-		$this->Session->del("$this->_branchKey.$branch");
+		$this->Session->delete("$this->_branchKey.$branch");
 	}
 /**
  * Finds the first incomplete step (i.e. step data not saved in Session).
