@@ -345,8 +345,14 @@ class WizardComponent extends Object {
  *
  * @access public
  */		
-	function save() {
-		$this->Session->write("$this->_sessionKey.$this->_currentStep", $this->controller->data);
+	function save($step = null, $data = null) {
+		if (is_null($step)) {
+			$step = $this->_currentStep;
+		}
+		if (is_null($data)) {
+			$data = $this->controller->data;
+		}		
+		$this->Session->write("$this->_sessionKey.$step", $data);
 	}
 /**
  * Removes a branch from the steps array.
