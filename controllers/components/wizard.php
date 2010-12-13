@@ -317,7 +317,7 @@ class WizardComponent extends Object {
 		if ($step == null) {
 			$step = $this->_getExpectedStep();
 		}
-		$url = array('controller' => strtolower($this->controller->name), 'action' => $this->wizardAction, $step);
+		$url = array('controller' => Inflector::underscore($this->controller->name), 'action' => $this->wizardAction, $step);
 		$this->controller->redirect($url, $status, $exit);
 	}
 /**
