@@ -97,6 +97,14 @@ class WizardComponent extends Object {
  */	
 	var $lockdown = false;
 /**
+ * If true, the component will render views found in views/{wizardAction}/{step}.ctp rather
+ *  than views/{step}.ctp.
+ *
+ * @var boolean
+ * @access public
+ */	
+	var $nestedViews = false;
+/**
  * Internal step tracking.
  *
  * @var string
@@ -140,12 +148,15 @@ class WizardComponent extends Object {
  */
 	function initialize(&$controller, $settings = array()) {
 		$this->controller =& $controller;
+		$this->_set($settings);
 		
 		$this->_sessionKey	= $this->Session->check('Wizard.complete') ? 'Wizard.complete' : 'Wizard.' . $controller->name;
 		$this->_configKey 	= 'Wizard.config';
-		$this->_branchKey	= 'Wizard.branches.' . $controller->name;	
+		$this->_branchKey	= 'Wizard.branches.' . $controller->name;
 		
-		$this->_set($settings);
+		if ($this->nestedViews) {
+			$controller->viewPath .= '/' . $this->wizardAction;
+		}
 	}
 /**
  * Component startup method.
