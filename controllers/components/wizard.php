@@ -350,6 +350,16 @@ class WizardComponent extends Object {
 		$this->Session->delete($this->_sessionKey);
 	}
 /**
+ * Sets data into controller's wizard session. Particularly useful if the data
+ * originated from WizardComponent::read() as this will restore a previous session.
+ * 
+ * @param array $data Data to be written to controller's wizard session.
+ * @access public
+ */
+	function restore($data = array()) {
+		$this->Session->write($this->_sessionKey, $data);
+	}
+/**
  * Saves the data from the current step into the Session.
  *
  * Please note: This is normally called automatically by the component after 
