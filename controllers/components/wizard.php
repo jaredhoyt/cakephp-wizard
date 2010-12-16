@@ -244,7 +244,7 @@ class WizardComponent extends Object {
 				$this->config('activeStep', $this->_currentStep);
 				
 				if ($this->nestedViews) {
-					$controller->viewPath .= '/' . $this->wizardAction;
+					$this->controller->viewPath .= '/' . $this->wizardAction;
 				}
 		
 				return $this->controller->autoRender ? $this->controller->render($this->_currentStep) : true;
