@@ -153,10 +153,6 @@ class WizardComponent extends Object {
 		$this->_sessionKey	= $this->Session->check('Wizard.complete') ? 'Wizard.complete' : 'Wizard.' . $controller->name;
 		$this->_configKey 	= 'Wizard.config';
 		$this->_branchKey	= 'Wizard.branches.' . $controller->name;
-		
-		if ($this->nestedViews) {
-			$controller->viewPath .= '/' . $this->wizardAction;
-		}
 	}
 /**
  * Component startup method.
@@ -246,6 +242,11 @@ class WizardComponent extends Object {
 				}
 				
 				$this->config('activeStep', $this->_currentStep);
+				
+				if ($this->nestedViews) {
+					$controller->viewPath .= '/' . $this->wizardAction;
+				}
+		
 				return $this->controller->autoRender ? $this->controller->render($this->_currentStep) : true;
 			} else {
 				trigger_error(sprintf(__('Step validation: %s is not a valid step.', true), $step), E_USER_WARNING);
