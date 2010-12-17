@@ -81,6 +81,13 @@ class WizardComponent extends Object {
  */
 	var $cancelUrl = '/';
 /**
+ * Url to be redirected to after 'Draft' submit button has been pressed by user.
+ *
+ * @var mixed
+ * @access public
+ */
+	var $draftUrl = '/';
+/**
  * If true, the first "non-skipped" branch in a group will be used if a branch has
  * not been included specifically.
  *
@@ -184,6 +191,15 @@ class WizardComponent extends Object {
 			$this->reset();
 			$this->controller->redirect($this->cancelUrl);
 		}
+		if (isset($this->controller->params['form']['Draft'])) {
+			if (method_exists($this->controller, '_saveDraft')) {
+				$draft = array('_draft' => array('current' => array('step' => $step, 'data' => $this->controller->data)));	
+				$this->controller->_saveDraft(array_merge_recursive((array)$this->read(), $draft));
+			}
+			
+			$this->reset();
+			$this->controller->redirect($this->draftUrl);
+		} 
 		
 		if (empty($step)) {
 			if ($this->Session->check('Wizard.complete')) { 
@@ -232,6 +248,9 @@ class WizardComponent extends Object {
 					}
 				} elseif (isset($this->controller->params['form']['Previous']) && prev($this->steps)) { 
 					$this->redirect(current($this->steps));
+				} elseif ($this->Session->check("$this->_sessionKey._draft.current")) {
+					$this->controller->data = $this->read('_draft.current.data');
+					$this->Session->delete("$this->_sessionKey._draft.current");
 				} elseif ($this->Session->check("$this->_sessionKey.$this->_currentStep")) {
 					$this->controller->data = $this->read($this->_currentStep);
 				}
@@ -298,6 +317,20 @@ class WizardComponent extends Object {
 		$this->Session->write("$this->_configKey.$name", $value);
 	}
 /**
+ * Loads previous draft session. 
+ * 
+ * @param array $draft Session data of same format passed to Controller::_saveDraft()
+ * @see WizardComponent::process()
+ * @access public
+ */
+	function loadDraft($draft = array()) {
+		if (!empty($draft['_draft']['current']['step'])) {
+			$this->restore($draft);
+			$this->redirect($draft['_draft']['current']['step']);
+		}
+		$this->redirect();
+	}
+/**
  * Get the data from the Session that has been stored by the WizardComponent.
  *
  * @param mixed $name The name of the session variable (or a path as sent to Set.extract)
@@ -309,11 +342,7 @@ class WizardComponent extends Object {
 			return $this->Session->read($this->_sessionKey);
 		} else {
 			$wizardData = $this->Session->read("$this->_sessionKey.$key");
-			if (!empty($wizardData)) {
-				return $wizardData;
-			} else {
-				return null;
-			}
+			return !empty($wizardData) ? $wizardData : null;
 		}
 	}
 /**
