@@ -15,7 +15,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */ 
 class WizardHelper extends AppHelper {
-	var $helpers = array('Session','Html');
+	var $helpers = array('Session','Html','Form');
 	var $output = null;
 	
 	/**
@@ -116,6 +116,19 @@ class WizardHelper extends AppHelper {
 		}
 		
 		return $this->output;
+	}
+	
+	/**
+	 * Wrapper for Form->create()
+	 *
+	 * @param string $model 
+	 * @param array $options 
+	 * @return string
+	 */
+	function create($model = null, $options = array()) {
+		if (!isset($options['url']) || !in_array($this->params['pass'][0], $options['url']))
+			$options['url'][] = $this->params['pass'][0];
+		return $this->Form->create($model, $options);
 	}
 }
 ?>
