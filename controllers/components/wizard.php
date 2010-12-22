@@ -64,7 +64,7 @@ class WizardComponent extends Object {
  * @var string
  * @access public
  */
-	var $wizardAction = 'wizard';
+	var $action = 'wizard';
 /**
  * Url to be redirected to after the wizard has been completed.
  * Controller::afterComplete() is called directly before redirection.
@@ -170,7 +170,7 @@ class WizardComponent extends Object {
 	function startup(&$controller) {		
 		$this->steps = $this->_parseSteps($this->steps);
 		
-		$this->config('wizardAction', $this->wizardAction);
+		$this->config('action', $this->action);
 		$this->config('steps', $this->steps);
 		
 		if (!in_array('Wizard.Wizard', $this->controller->helpers) && !array_key_exists('Wizard.Wizard', $this->controller->helpers)) {
@@ -243,7 +243,7 @@ class WizardComponent extends Object {
 							$this->Session->write('Wizard.complete', $this->read());		
 							$this->reset();
 							
-							$this->controller->redirect($this->wizardAction);
+							$this->controller->redirect($this->action);
 						}
 					}
 				} elseif (isset($this->controller->params['form']['Previous']) && prev($this->steps)) { 
@@ -263,7 +263,7 @@ class WizardComponent extends Object {
 				$this->config('activeStep', $this->_currentStep);
 				
 				if ($this->nestedViews) {
-					$this->controller->viewPath .= '/' . $this->wizardAction;
+					$this->controller->viewPath .= '/' . $this->action;
 				}
 		
 				return $this->controller->autoRender ? $this->controller->render($this->_currentStep) : true;
@@ -358,7 +358,7 @@ class WizardComponent extends Object {
 		if ($step == null) {
 			$step = $this->_getExpectedStep();
 		}
-		$url = array('controller' => Inflector::underscore($this->controller->name), 'action' => $this->wizardAction, $step);
+		$url = array('controller' => Inflector::underscore($this->controller->name), 'action' => $this->action, $step);
 		$this->controller->redirect($url, $status, $exit);
 	}
 /**
