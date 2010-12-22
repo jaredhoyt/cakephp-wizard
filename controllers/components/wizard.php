@@ -11,7 +11,6 @@
  * Licensed under The MIT License
  *
  * @writtenby		jaredhoyt
- * @lastmodified	Date: March 11, 2009
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */ 
 class WizardComponent extends Object {
@@ -65,7 +64,7 @@ class WizardComponent extends Object {
  * @var string
  * @access public
  */
-	var $action = 'wizard';
+	var $wizardAction = 'wizard';
 /**
  * Url to be redirected to after the wizard has been completed.
  * Controller::afterComplete() is called directly before redirection.
@@ -82,6 +81,13 @@ class WizardComponent extends Object {
  */
 	var $cancelUrl = '/';
 /**
+ * Url to be redirected to after 'Draft' submit button has been pressed by user.
+ *
+ * @var mixed
+ * @access public
+ */
+	var $draftUrl = '/';
+/**
  * If true, the first "non-skipped" branch in a group will be used if a branch has
  * not been included specifically.
  *
@@ -97,6 +103,14 @@ class WizardComponent extends Object {
  * @access public
  */	
 	var $lockdown = false;
+/**
+ * If true, the component will render views found in views/{wizardAction}/{step}.ctp rather
+ *  than views/{step}.ctp.
+ *
+ * @var boolean
+ * @access public
+ */	
+	var $nestedViews = false;
 /**
  * Internal step tracking.
  *
@@ -139,12 +153,13 @@ class WizardComponent extends Object {
  * @param object $controller A reference to the instantiating controller object
  * @access public
  */
-	function initialize(&$controller) {
+	function initialize(&$controller, $settings = array()) {
 		$this->controller =& $controller;
+		$this->_set($settings);
 		
 		$this->_sessionKey	= $this->Session->check('Wizard.complete') ? 'Wizard.complete' : 'Wizard.' . $controller->name;
 		$this->_configKey 	= 'Wizard.config';
-		$this->_branchKey	= 'Wizard.branches.' . $controller->name;	
+		$this->_branchKey	= 'Wizard.branches.' . $controller->name;
 	}
 /**
  * Component startup method.
@@ -155,8 +170,12 @@ class WizardComponent extends Object {
 	function startup(&$controller) {		
 		$this->steps = $this->_parseSteps($this->steps);
 		
-		$this->config('action', $this->action);
+		$this->config('wizardAction', $this->wizardAction);
 		$this->config('steps', $this->steps);
+		
+		if (!in_array('Wizard.Wizard', $this->controller->helpers) && !array_key_exists('Wizard.Wizard', $this->controller->helpers)) {
+			$this->controller->helpers[] = 'Wizard.Wizard';
+		}
 	}
 /**
  * Main Component method.
@@ -172,6 +191,15 @@ class WizardComponent extends Object {
 			$this->reset();
 			$this->controller->redirect($this->cancelUrl);
 		}
+		if (isset($this->controller->params['form']['Draft'])) {
+			if (method_exists($this->controller, '_saveDraft')) {
+				$draft = array('_draft' => array('current' => array('step' => $step, 'data' => $this->controller->data)));	
+				$this->controller->_saveDraft(array_merge_recursive((array)$this->read(), $draft));
+			}
+			
+			$this->reset();
+			$this->controller->redirect($this->draftUrl);
+		} 
 		
 		if (empty($step)) {
 			if ($this->Session->check('Wizard.complete')) { 
@@ -215,11 +243,14 @@ class WizardComponent extends Object {
 							$this->Session->write('Wizard.complete', $this->read());		
 							$this->reset();
 							
-							$this->controller->redirect($this->action);
+							$this->controller->redirect($this->wizardAction);
 						}
 					}
 				} elseif (isset($this->controller->params['form']['Previous']) && prev($this->steps)) { 
 					$this->redirect(current($this->steps));
+				} elseif ($this->Session->check("$this->_sessionKey._draft.current")) {
+					$this->controller->data = $this->read('_draft.current.data');
+					$this->Session->delete("$this->_sessionKey._draft.current");
 				} elseif ($this->Session->check("$this->_sessionKey.$this->_currentStep")) {
 					$this->controller->data = $this->read($this->_currentStep);
 				}
@@ -230,6 +261,11 @@ class WizardComponent extends Object {
 				}
 				
 				$this->config('activeStep', $this->_currentStep);
+				
+				if ($this->nestedViews) {
+					$this->controller->viewPath .= '/' . $this->wizardAction;
+				}
+		
 				return $this->controller->autoRender ? $this->controller->render($this->_currentStep) : true;
 			} else {
 				trigger_error(sprintf(__('Step validation: %s is not a valid step.', true), $step), E_USER_WARNING);
@@ -281,6 +317,20 @@ class WizardComponent extends Object {
 		$this->Session->write("$this->_configKey.$name", $value);
 	}
 /**
+ * Loads previous draft session. 
+ * 
+ * @param array $draft Session data of same format passed to Controller::_saveDraft()
+ * @see WizardComponent::process()
+ * @access public
+ */
+	function loadDraft($draft = array()) {
+		if (!empty($draft['_draft']['current']['step'])) {
+			$this->restore($draft);
+			$this->redirect($draft['_draft']['current']['step']);
+		}
+		$this->redirect();
+	}
+/**
  * Get the data from the Session that has been stored by the WizardComponent.
  *
  * @param mixed $name The name of the session variable (or a path as sent to Set.extract)
@@ -292,11 +342,7 @@ class WizardComponent extends Object {
 			return $this->Session->read($this->_sessionKey);
 		} else {
 			$wizardData = $this->Session->read("$this->_sessionKey.$key");
-			if (!empty($wizardData)) {
-				return $wizardData;
-			} else {
-				return null;
-			}
+			return !empty($wizardData) ? $wizardData : null;
 		}
 	}
 /**
@@ -312,7 +358,7 @@ class WizardComponent extends Object {
 		if ($step == null) {
 			$step = $this->_getExpectedStep();
 		}
-		$url = array('controller' => $this->controller->name, 'action' => $this->action, $step);
+		$url = array('controller' => Inflector::underscore($this->controller->name), 'action' => $this->wizardAction, $step);
 		$this->controller->redirect($url, $status, $exit);
 	}
 /**
@@ -320,9 +366,27 @@ class WizardComponent extends Object {
  *
  * @access public
  */	
+	function resetWizard() {
+		$this->reset();
+	}
+/**
+ * Resets the wizard by deleting the wizard session.
+ *
+ * @access public
+ */		
 	function reset() {
 		$this->Session->delete($this->_branchKey);
 		$this->Session->delete($this->_sessionKey);
+	}
+/**
+ * Sets data into controller's wizard session. Particularly useful if the data
+ * originated from WizardComponent::read() as this will restore a previous session.
+ * 
+ * @param array $data Data to be written to controller's wizard session.
+ * @access public
+ */
+	function restore($data = array()) {
+		$this->Session->write($this->_sessionKey, $data);
 	}
 /**
  * Saves the data from the current step into the Session.
@@ -332,8 +396,14 @@ class WizardComponent extends Object {
  *
  * @access public
  */		
-	function save() {
-		$this->Session->write("$this->_sessionKey.$this->_currentStep", $this->controller->data);
+	function save($step = null, $data = null) {
+		if (is_null($step)) {
+			$step = $this->_currentStep;
+		}
+		if (is_null($data)) {
+			$data = $this->controller->data;
+		}		
+		$this->Session->write("$this->_sessionKey.$step", $data);
 	}
 /**
  * Removes a branch from the steps array.
