@@ -242,8 +242,7 @@ class WizardComponent extends Object {
 						} else {
 							$this->Session->write('Wizard.complete', $this->read());		
 							$this->reset();
-							
-							$this->controller->redirect($this->action);
+							$this->controller->redirect(array('action' => $this->action));
 						}
 					}
 				} elseif (isset($this->controller->params['form']['Previous']) && prev($this->steps)) { 
