@@ -267,7 +267,7 @@ class WizardComponent extends Object {
 		
 				return $this->controller->autoRender ? $this->controller->render($this->_currentStep) : true;
 			} else {
-				trigger_error(sprintf(__('Step validation: %s is not a valid step.', true), $step), E_USER_WARNING);
+				$this->redirect();
 			}
 		}
 	
