@@ -73,6 +73,13 @@ class WizardHelper extends AppHelper {
 			return false;
 		}
 	}
+
+	function stepTotal()
+	{
+		$steps = $this->config('steps');
+		return count($steps);
+	}
+
 /**
  * Returns a set of html elements containing links for each step in the wizard. 
  *
@@ -86,7 +93,8 @@ class WizardHelper extends AppHelper {
 	function progressMenu($titles = array(), $attributes = array(), $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
 		$wizardConfig = $this->config();
 		extract($wizardConfig);	
-		
+                $wizardAction = $this->config('wizardAction');
+
 		$attributes = array_merge(array('wrap' => 'div'), $attributes);
 		extract($attributes);
 		

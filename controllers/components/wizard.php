@@ -404,6 +404,21 @@ class WizardComponent extends Object {
 		}		
 		$this->controller->Session->write("$this->_sessionKey.$step", $data);
 	}
+	
+/**
+ * Resets the data from the Session that has been stored by the WizardComponent.
+ *
+ * @param mixed $name The name of the session variable (or a path as sent to Set.extract)
+ * @access public
+ */
+	function delete($key = null) {
+		if ($key == null) {
+			return;
+		} else {
+			$this->Session->delete("$this->_sessionKey.$key");
+			return;
+		}
+	}
 /**
  * Removes a branch from the steps array.
  *
@@ -472,6 +487,8 @@ class WizardComponent extends Object {
 						$parsed[] = $name[$branch];
 					}
 				}
+				
+				unset($branch);
 			} else {
 				$parsed[] = $name;
 			}
