@@ -183,15 +183,15 @@ class WizardComponent extends Object {
  * @param string $step Name of step associated in $this->steps to be processed.
  * @access public
  */		
-	function process($step) {
-		if (isset($this->controller->params['form']['Cancel'])) {
+	function process($step) { 
+		if (isset($this->controller->request->data['Cancel'])) {
 			if (method_exists($this->controller, '_beforeCancel')) {
 				$this->controller->_beforeCancel($this->_getExpectedStep());
 			}
 			$this->reset();
 			$this->controller->redirect($this->cancelUrl);
 		}
-		if (isset($this->controller->params['form']['Draft'])) {
+		if (isset($this->controller->request->data['Draft'])) {
 			if (method_exists($this->controller, '_saveDraft')) {
 				$draft = array('_draft' => array('current' => array('step' => $step, 'data' => $this->controller->data)));	
 				$this->controller->_saveDraft(array_merge_recursive((array)$this->read(), $draft));
@@ -219,7 +219,7 @@ class WizardComponent extends Object {
 			if ($this->_validStep($step)) {
 				$this->_setCurrentStep($step);
 												
-				if (!empty($this->controller->data) && !isset($this->controller->params['form']['Previous'])) { 
+				if (!empty($this->controller->data) && !isset($this->controller->request->data['Previous'])) { 
 					$proceed = false;
 					
 					$processCallback = '_' . Inflector::variable('process_' . $this->_currentStep);
@@ -245,7 +245,7 @@ class WizardComponent extends Object {
 							$this->controller->redirect(array('action' => $this->action));
 						}
 					}
-				} elseif (isset($this->controller->params['form']['Previous']) && prev($this->steps)) { 
+				} elseif (isset($this->controller->request->data['Previous']) && prev($this->steps)) { 
 					$this->redirect(current($this->steps));
 				} elseif ($this->controller->Session->check("$this->_sessionKey._draft.current")) {
 					$this->controller->data = $this->read('_draft.current.data');
@@ -549,6 +549,8 @@ class WizardComponent extends Object {
 		return false;
 	}
         
+        //Mandatory Component Methods : 
+        function beforeRedirect(&$controller, $url, $status=null, $exit=true) {    }
         
         function beforeRender(&$controller) {    }
         
