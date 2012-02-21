@@ -532,13 +532,11 @@ class WizardComponent extends Object {
 		return false;
 	}
         
-        //Mendatory Component Method
+        //Mandatory Component Methods : 
         function beforeRedirect(&$controller, $url, $status=null, $exit=true) {    }
         
-        //Mendatory Component Method
         function beforeRender(&$controller) {    }
         
-        //Mendatory Component Method
         function shutdown(&$controller) {    }
 }
 ?>
