@@ -157,7 +157,7 @@ class WizardComponent extends Object {
 		$this->controller =& $controller;
 		$this->_set($settings);
 		
-		$this->_sessionKey	= $this->Session->check('Wizard.complete') ? 'Wizard.complete' : 'Wizard.' . $controller->name;
+		$this->_sessionKey	= $this->controller->Session->check('Wizard.complete') ? 'Wizard.complete' : 'Wizard.' . $controller->name;
 		$this->_configKey 	= 'Wizard.config';
 		$this->_branchKey	= 'Wizard.branches.' . $controller->name;
 	}
@@ -202,7 +202,7 @@ class WizardComponent extends Object {
 		} 
 		
 		if (empty($step)) {
-			if ($this->Session->check('Wizard.complete')) { 
+			if ($this->controller->Session->check('Wizard.complete')) { 
 				if (method_exists($this->controller, '_afterComplete')) {
 					$this->controller->_afterComplete();
 				}
@@ -240,17 +240,17 @@ class WizardComponent extends Object {
 							}
 							$this->redirect(current($this->steps));
 						} else {
-							$this->Session->write('Wizard.complete', $this->read());		
+							$this->controller->Session->write('Wizard.complete', $this->read());		
 							$this->reset();
 							$this->controller->redirect(array('action' => $this->action));
 						}
 					}
 				} elseif (isset($this->controller->params['form']['Previous']) && prev($this->steps)) { 
 					$this->redirect(current($this->steps));
-				} elseif ($this->Session->check("$this->_sessionKey._draft.current")) {
+				} elseif ($this->controller->Session->check("$this->_sessionKey._draft.current")) {
 					$this->controller->data = $this->read('_draft.current.data');
-					$this->Session->delete("$this->_sessionKey._draft.current");
-				} elseif ($this->Session->check("$this->_sessionKey.$this->_currentStep")) {
+					$this->controller->Session->delete("$this->_sessionKey._draft.current");
+				} elseif ($this->controller->Session->check("$this->_sessionKey.$this->_currentStep")) {
 					$this->controller->data = $this->read($this->_currentStep);
 				}
 			
@@ -287,8 +287,8 @@ class WizardComponent extends Object {
 	function branch($name, $skip = false) {	
 		$branches = array();
 		
-		if ($this->Session->check($this->_branchKey)) {
-			$branches = $this->Session->read($this->_branchKey);
+		if ($this->controller->Session->check($this->_branchKey)) {
+			$branches = $this->controller->Session->read($this->_branchKey);
 		}
 		
 		if (isset($branches[$name])) {
@@ -298,7 +298,7 @@ class WizardComponent extends Object {
 		$value = $skip ? 'skip' : 'branch';
 		$branches[$name] = $value;
 		
-		$this->Session->write($this->_branchKey, $branches);
+		$this->controller->Session->write($this->_branchKey, $branches);
 	}
 /**
  * Saves configuration details for use in WizardHelper or returns a config value. 
@@ -311,9 +311,9 @@ class WizardComponent extends Object {
  */	
 	function config($name, $value = null) {
 		if ($value == null) {
-			return $this->Session->read("$this->_configKey.$name");
+			return $this->controller->Session->read("$this->_configKey.$name");
 		}
-		$this->Session->write("$this->_configKey.$name", $value);
+		$this->controller->Session->write("$this->_configKey.$name", $value);
 	}
 /**
  * Loads previous draft session. 
@@ -338,9 +338,9 @@ class WizardComponent extends Object {
  */
 	function read($key = null) {
 		if ($key == null) {
-			return $this->Session->read($this->_sessionKey);
+			return $this->controller->Session->read($this->_sessionKey);
 		} else {
-			$wizardData = $this->Session->read("$this->_sessionKey.$key");
+			$wizardData = $this->controller->Session->read("$this->_sessionKey.$key");
 			return !empty($wizardData) ? $wizardData : null;
 		}
 	}
@@ -374,8 +374,8 @@ class WizardComponent extends Object {
  * @access public
  */		
 	function reset() {
-		$this->Session->delete($this->_branchKey);
-		$this->Session->delete($this->_sessionKey);
+		$this->controller->Session->delete($this->_branchKey);
+		$this->controller->Session->delete($this->_sessionKey);
 	}
 /**
  * Sets data into controller's wizard session. Particularly useful if the data
@@ -385,7 +385,7 @@ class WizardComponent extends Object {
  * @access public
  */
 	function restore($data = array()) {
-		$this->Session->write($this->_sessionKey, $data);
+		$this->controller->Session->write($this->_sessionKey, $data);
 	}
 /**
  * Saves the data from the current step into the Session.
@@ -402,7 +402,7 @@ class WizardComponent extends Object {
 		if (is_null($data)) {
 			$data = $this->controller->data;
 		}		
-		$this->Session->write("$this->_sessionKey.$step", $data);
+		$this->controller->Session->write("$this->_sessionKey.$step", $data);
 	}
 /**
  * Removes a branch from the steps array.
@@ -411,7 +411,7 @@ class WizardComponent extends Object {
  * @access public
  */	
 	function unbranch($branch) {
-		$this->Session->delete("$this->_branchKey.$branch");
+		$this->controller->Session->delete("$this->_branchKey.$branch");
 	}
 /**
  * Finds the first incomplete step (i.e. step data not saved in Session).
@@ -421,7 +421,7 @@ class WizardComponent extends Object {
  */	
 	function _getExpectedStep() {
 		foreach ($this->steps as $step) {
-			if (!$this->Session->check("$this->_sessionKey.$step")) {
+			if (!$this->controller->Session->check("$this->_sessionKey.$step")) {
 				$this->config('expectedStep', $step);	
 				return $step;
 			}
@@ -435,8 +435,8 @@ class WizardComponent extends Object {
  * @access protected
  */		
 	function _branchType($branch) {
-		if ($this->Session->check("$this->_branchKey.$branch")) {
-			return $this->Session->read("$this->_branchKey.$branch");
+		if ($this->controller->Session->check("$this->_branchKey.$branch")) {
+			return $this->controller->Session->read("$this->_branchKey.$branch");
 		}
 		return false;
 	}
@@ -531,5 +531,10 @@ class WizardComponent extends Object {
 		}
 		return false;
 	}
+        
+        
+        function beforeRender(&$controller) {    }
+        
+        function shutdown(&$controller) {    }
 }
 ?>
