@@ -13,7 +13,7 @@
  * @writtenby		jaredhoyt
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */ 
-class WizardComponent extends Object {
+class WizardComponent extends Component {
 /**
  * The Component will redirect to the "expected step" after a step has been successfully
  * completed if autoAdvance is true. If false, the Component will redirect to 
@@ -153,8 +153,8 @@ class WizardComponent extends Object {
  * @param object $controller A reference to the instantiating controller object
  * @access public
  */
-	function initialize(&$controller, $settings = array()) {
-		$this->controller =& $controller;
+	function initialize($controller, $settings = array()) {
+		$this->controller = $controller;
 		$this->_set($settings);
 		
 		$this->_sessionKey	= $this->controller->Session->check('Wizard.complete') ? 'Wizard.complete' : 'Wizard.' . $controller->name;
@@ -549,11 +549,6 @@ class WizardComponent extends Object {
 		return false;
 	}
         
-        //Mandatory Component Methods : 
-        function beforeRedirect(&$controller, $url, $status=null, $exit=true) {    }
-        
-        function beforeRender(&$controller) {    }
-        
-        function shutdown(&$controller) {    }
+
 }
 ?>
