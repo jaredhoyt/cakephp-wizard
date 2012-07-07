@@ -357,7 +357,7 @@ class WizardComponent extends Component {
 		if ($step == null) {
 			$step = $this->_getExpectedStep();
 		}
-		$url = array('controller' => $this->controller->params['controller'], 'action' => $this->action, $step);
+		$url = array('controller' => $this->controller->request->controller, 'action' => $this->action, $step);
 		$this->controller->redirect($url, $status, $exit);
 	}
 /**
