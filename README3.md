@@ -35,24 +35,24 @@ So, to complete our tutorial example, we will pull all the data out of the wizar
 
 <pre><code><?php 
 class SignupController extends AppController {
-	var $uses = array('Client', 'User', 'Billing');
-	var $components = array('Wizard');
+	public $uses = array('Client', 'User', 'Billing');
+	public $components = array('Wizard');
 
-	function beforeFilter() {
+	public function beforeFilter() {
 		$this->Wizard->steps = array('account', 'address', 'billing', 'review');
 		$this->Wizard->completeUrl = '/signup/confirm';
 	}
 
-	function confirm() {
+	public function confirm() {
 	}
 
-	function wizard($step = null) {
+	public function wizard($step = null) {
 		$this->Wizard->process($step);
 	}
 /**
  * [Wizard Process Callbacks]
  */
-	function _processAccount() {
+	protected function _processAccount() {
 		$this->Client->set($this->data);
 		$this->User->set($this->data);
 
@@ -62,7 +62,7 @@ class SignupController extends AppController {
 		return false;
 	}
 
-	function _processAddress() {
+	protected function _processAddress() {
 		$this->Client->set($this->data);
 
 		if($this->Client->validates()) {
@@ -71,7 +71,7 @@ class SignupController extends AppController {
 		return false;
 	}
 
-	function _processBilling() {
+	protected function _processBilling() {
 		$this->Billing->set($this->data);
 
 		if($this->Billing->validates()) {
@@ -80,13 +80,13 @@ class SignupController extends AppController {
 		return false;
 	}
 
-	function _processReview() {
+	protected function _processReview() {
 		return true;
 	}
 /**
  * [Wizard Completion Callback]
  */
-	function _afterComplete() {
+	protected function _afterComplete() {
 		$wizardData = $this->Wizard->read();
 		extract($wizardData);
 
