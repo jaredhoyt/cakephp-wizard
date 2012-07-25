@@ -10,13 +10,13 @@ Because of this, the wizard action itself can be very basic. It merely needs to 
 
 <pre><code>&lt;?php 
 class SignupController extends AppController {
-	var $components = array('Wizard');
+	public $components = array('Wizard');
 
-	function beforeFilter() {
+	public function beforeFilter() {
 		$this-&gt;Wizard-&gt;steps = array('account', 'address', 'billing', 'review');
 	}
 
-	function wizard($step = null) {
+	public function wizard($step = null) {
 		$this-&gt;Wizard-&gt;process($step);
 	}
 }
@@ -41,20 +41,20 @@ So lets create some basic process callbacks. Real world examples would most like
 
 <pre><code>&lt;?php 
 class SignupController extends AppController {
-	var $uses = array('Client', 'User', 'Billing');
-	var $components = array('Wizard');
+	public $uses = array('Client', 'User', 'Billing');
+	public $components = array('Wizard');
 
-	function beforeFilter() {
+	public function beforeFilter() {
 		$this-&gt;Wizard-&gt;steps = array('account', 'address', 'billing', 'review');
 	}
 
-	function wizard($step = null) {
+	public function wizard($step = null) {
 		$this-&gt;Wizard-&gt;process($step);
 	}
 /**
  * [Wizard Process Callbacks]
  */
-	function processAccount() {
+	public function processAccount() {
 		$this-&gt;Client-&gt;set($this-&gt;data);
 		$this-&gt;User-&gt;set($this-&gt;data);
 
@@ -64,7 +64,7 @@ class SignupController extends AppController {
 		return false;
 	}
 
-	function processAddress() {
+	public function processAddress() {
 		$this-&gt;Client-&gt;set($this-&gt;data);
 
 		if($this-&gt;Client-&gt;validates()) {
@@ -73,7 +73,7 @@ class SignupController extends AppController {
 		return false;
 	}
 
-	function processBilling() {
+	public function processBilling() {
 		$this-&gt;Billing-&gt;set($this-&gt;data);
 
 		if($this-&gt;Billing-&gt;validates()) {
@@ -82,7 +82,7 @@ class SignupController extends AppController {
 		return false;
 	}
 
-	function processReview() {
+	public function processReview() {
 		return true;
 	}
 }
