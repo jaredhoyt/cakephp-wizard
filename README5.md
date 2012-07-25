@@ -20,7 +20,7 @@ In order to specify to the component which branches should be used, you must use
 
 So lets assume "female" was selected on the gender step. During the "processGender" callback, we could specify the "female" branch to be included:
 
-<pre><code>function processGender() {
+<pre><code>public  function processGender() {
 	$this->Client->set($this->data);
 
 	if($this->Client->validates()) {
