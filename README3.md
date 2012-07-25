@@ -10,7 +10,7 @@ Wizard data is stored with the following path: sessionKey.stepName.modelName.fie
 
 So, for example, if we wanted to do something with the client's email address (which was obtained in the account step) while processing the review step, we would use the following code:
 
-<pre><code>function processReview() {
+<pre><code>public function processReview() {
 	$email = $this->Wizard->read('account.User.email');
 	/* do something with the $email here */
 
