@@ -6,7 +6,7 @@ The Wizard plugin for CakePHP automates several aspects of multi-page forms incl
 
 * Clone/Copy the files in this directory into `app/plugins/wizard`
 * Include the wizard component in your controller:
-   * `var $components = array('Wizard.Wizard');`
+   * `public $components = array('Wizard.Wizard');`
 
 ## Documentation
 
