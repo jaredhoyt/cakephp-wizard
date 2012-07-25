@@ -16,13 +16,13 @@ An advanced $steps array setup for pbn is a multi-tiered structure consisting of
 
 For example, lets say we had six steps: step1, step2, gender, step3, step4, and step5. The gender step would determine the user's gender and the subsequent steps would vary accordingly. If male, step3 and step4 would be used; if female, step4 and step5 would be used. So lets setup our $steps array:
 
-<pre><code>function beforeFilter() {
+<pre><code>public function beforeFilter() {
 	$this->Wizard->steps = array('step1', 'step2', 'gender', array('male' => array('step3', 'step4'), 'female' => array('step4', 'step5')));
 }</code></pre>
 
 It's important to understand that there is almost always more than one way to accomplish the same effect with different $steps arrays. For example, I could have instead, setup a 'male' branch that used step3, included step4 for both, and then another branch for 'female' that would include step5.
 
-<pre><code>function beforeFilter() {
+<pre><code>public function beforeFilter() {
 	$this->Wizard->steps = array('step1', 'step2', 'gender', array('male' => array('step3')), 'step4', array('female' => array('step5')));
 }</code></pre>
 
