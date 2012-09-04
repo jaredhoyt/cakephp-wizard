@@ -14,6 +14,14 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */ 
 class WizardComponent extends Component {
+	
+/**
+ * Controller $controller variable.
+ *
+ * @var string
+ * @access public
+ */
+	public $controller = null;	
 /**
  * The Component will redirect to the "expected step" after a step has been successfully
  * completed if autoAdvance is true. If false, the Component will redirect to 
@@ -117,29 +125,29 @@ class WizardComponent extends Component {
  * @var string
  * @access protected
  */
-	public $_currentStep = null;
+	protected $_currentStep = null;
 /**
  * Holds the session key for data storage.
  *
  * @var string
  * @access protected
  */
-	public $_sessionKey = null;
+	protected $_sessionKey = null;
 /**
  * Other session keys used.
  *
  * @var string
  * @access protected
  */
-	public $_configKey = null;
-	public $_branchKey = null;
+	protected $_configKey = null;
+	protected $_branchKey = null;
 /**
  * Holds the array based url for redirecting.
  * 
  * @var array
  * @access protected
  */
-	public $_wizardUrl = array();
+	protected $_wizardUrl = array();
 /**
  * Other components used.
  *
@@ -147,15 +155,28 @@ class WizardComponent extends Component {
  * @access public
  */
 	public $components = array('Session');
+	
+/**
+ * WizardComponent Constructor
+ *
+ * @param ComponentCollection $collection A ComponentCollection this component can use to lazy-load its components
+ * @param array $settings Array of configuration settings
+ * @access public
+ */
+        public function __construct(ComponentCollection $collection, $settings = array()) {
+            parent::__construct($collection, $settings);
+            $this->_set($settings);
+        }
+
 /**
  * Initializes WizardComponent for use in the controller
  *
  * @param object $controller A reference to the instantiating controller object
  * @access public
+ * @return void
  */
-	public function initialize($controller, $settings = array()) {
+	public function initialize(Controller $controller) {
 		$this->controller = $controller;
-		$this->_set($settings);
 		
 		$this->_sessionKey	= $this->controller->Session->check('Wizard.complete') ? 'Wizard.complete' : 'Wizard.' . $controller->name;
 		$this->_configKey 	= 'Wizard.config';
@@ -163,11 +184,11 @@ class WizardComponent extends Component {
 	}
 /**
  * Component startup method.
- *
+ * Called after the Controller::beforeFilter() and before the controller action
  * @param object $controller A reference to the instantiating controller object
  * @access public
  */	
-	public function startup(&$controller) {		
+	public function startup(Controller $controller) {		
 		$this->steps = $this->_parseSteps($this->steps);
 		
 		$this->config('action', $this->action);
