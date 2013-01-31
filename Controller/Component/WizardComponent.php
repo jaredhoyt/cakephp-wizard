@@ -105,12 +105,19 @@ class WizardComponent extends Component {
 	public $defaultBranch = true;
 /**
  * If true, the user will not be allowed to edit previously completed steps. They will be
- * "locked down" to the current step.
+ * "locked down" to the current step. The opposite of $roaming.
  *
  * @var boolean
  * @access public
  */	
 	public $lockdown = false;
+/**
+ * If true, the user will be allowed navigate to any steps. The opposite of $lockdown.
+ *
+ * @var boolean
+ * @access public
+ */
+	public $roaming = false;
 /**
  * If true, the component will render views found in views/{wizardAction}/{step}.ctp rather
  *  than views/{step}.ctp.
@@ -552,9 +559,11 @@ class WizardComponent extends Component {
 		return true;
 	}
 /**
- * Validates the $step in two ways:
- *   1. Validates that the step exists in $this->steps array.
- *   2. Validates that the step is either before or exactly the expected step.
+ * Validates the $step four ways:
+ *   1. Explicitly only validate step that exists in $this->steps array.
+ *   2. If $roaming option is true any steps within $this->steps is valid
+ *   3. If $lockdown option is true only the next/current step is valid.
+ *   4. If $roaming and $lockdown is false validate the step either before or exactly the expected step.
  *
  * @param $step Step to validate.
  * @return mixed
@@ -562,7 +571,9 @@ class WizardComponent extends Component {
  */		
 	protected function _validStep($step) {
 		if (in_array($step, $this->steps)) {
-			if ($this->lockdown) {
+			if($this->roaming) {
+				return true;
+			} elseif ($this->lockdown) {
 				return (array_search($step, $this->steps) == array_search($this->_getExpectedStep(), $this->steps));
 			}
 			return (array_search($step, $this->steps) <= array_search($this->_getExpectedStep(), $this->steps));
