@@ -256,7 +256,7 @@ class WizardComponent extends Component {
 					} elseif ($this->autoValidate) {
 						$proceed = $this->_validateData();
 					} else {
-						trigger_error(sprintf(__('Process Callback not found. Please create Controller::%s', true), $processCallback), E_USER_WARNING);
+						throw new NotImplementedException(sprintf(__('Process Callback not found. Please create Controller::%s', $processCallback)));
 					}
 					
 					if ($proceed) {
