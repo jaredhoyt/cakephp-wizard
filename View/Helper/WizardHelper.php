@@ -5,18 +5,21 @@
  * Creates links, outputs step numbers for views, and creates dynamic progress menu as the wizard is completed.
  *
  * PHP versions 4 and 5
- *
  * Comments and bug reports welcome at jaredhoyt AT gmail DOT com
- *
  * Licensed under The MIT License
  *
- * @writtenby		jaredhoyt
- * @lastmodified	Date: March 11, 2009
- * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
- */ 
+ * @property FormHelper $Form
+ * @property SessionHelper $Session
+ * @property HtmlHelper $Html
+ */
 class WizardHelper extends AppHelper {
-	public $helpers = array('Session','Html','Form');
+	public $helpers = array(
+		'Session',
+		'Html',
+		'Form'
+	);
 	public $output = null;
+
 /**
  * undocumented function
  *
@@ -27,7 +30,7 @@ class WizardHelper extends AppHelper {
 		if ($key == null) {
 			return $this->Session->read('Wizard.config');
 		} else {
-			$wizardData = $this->Session->read('Wizard.config.'.$key);
+			$wizardData = $this->Session->read('Wizard.config.' . $key);
 			if (!empty($wizardData)) {
 				return $wizardData;
 			} else {
@@ -35,14 +38,15 @@ class WizardHelper extends AppHelper {
 			}
 		}
 	}
+
 /**
  * undocumented function
  *
- * @param string $title 
- * @param string $step 
- * @param string $htmlAttributes 
- * @param string $confirmMessage 
- * @param string $escapeTitle 
+ * @param string       $title
+ * @param string       $step
+ * @param array|string $htmlAttributes
+ * @param bool|string  $confirmMessage
+ * @param bool|string  $escapeTitle
  * @return string link to a specific step
  */
 	public function link($title, $step = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
@@ -50,23 +54,24 @@ class WizardHelper extends AppHelper {
 			$step = $title;
 		}
 		$wizardAction = $this->config('wizardAction');
-		
-		return $this->Html->link($title, $wizardAction.$step, $htmlAttributes, $confirmMessage, $escapeTitle);
+
+		return $this->Html->link($title, $wizardAction . $step, $htmlAttributes, $confirmMessage, $escapeTitle);
 	}
+
 /**
  * Retrieve the step number of the specified step name, or the active step
  *
- * @param string $step optional name of step
- * @param string $shiftIndex optional offset of returned array index. Default 1
+ * @param string     $step       optional name of step
+ * @param int|string $shiftIndex optional offset of returned array index. Default 1
  * @return string step number. Returns false if not found
  */
 	public function stepNumber($step = null, $shiftIndex = 1) {
 		if ($step == null) {
 			$step = $this->config('activeStep');
 		}
-		
+
 		$steps = $this->config('steps');
-		
+
 		if (in_array($step, $steps)) {
 			return array_search($step, $steps) + $shiftIndex;
 		} else {
@@ -74,35 +79,35 @@ class WizardHelper extends AppHelper {
 		}
 	}
 
-	public function stepTotal()
-	{
+	public function stepTotal() {
 		$steps = $this->config('steps');
 		return count($steps);
 	}
 
 /**
- * Returns a set of html elements containing links for each step in the wizard. 
+ * Returns a set of html elements containing links for each step in the wizard.
  *
- * @param string $titles 
- * @param string $attributes pass a value for 'wrap' to change the default tag used
- * @param string $htmlAttributes 
- * @param string $confirmMessage 
- * @param string $escapeTitle 
+ * @param array|string $titles
+ * @param array|string $attributes pass a value for 'wrap' to change the default tag used
+ * @param array|string $htmlAttributes
+ * @param bool|string  $confirmMessage
+ * @param bool|string  $escapeTitle
+ *
  * @return string
  */
 	public function progressMenu($titles = array(), $attributes = array(), $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
 		$wizardConfig = $this->config();
-		extract($wizardConfig);	
-                $wizardAction = $this->config('wizardAction');
+		extract($wizardConfig);
+		$wizardAction = $this->config('wizardAction');
 
 		$attributes = array_merge(array('wrap' => 'div'), $attributes);
 		extract($attributes);
-		
+
 		$incomplete = null;
 
 		foreach ($steps as $title => $step) {
 			$title = empty($titles[$step]) ? $step : $titles[$step];
-			
+
 			if (!$incomplete) {
 				if ($step == $expectedStep) {
 					$incomplete = true;
@@ -113,25 +118,30 @@ class WizardHelper extends AppHelper {
 				if ($step == $activeStep) {
 					$class .= ' active';
 				}
-				$this->output .= "<$wrap class='$class'>" . $this->Html->link($title, array('action' => $wizardAction, $step), $htmlAttributes, $confirmMessage, $escapeTitle) . "</$wrap>";
+				$this->output .= "<$wrap class='$class'>" . $this->Html->link($title, array(
+						'action' => $wizardAction,
+						$step
+					), $htmlAttributes, $confirmMessage, $escapeTitle) . "</$wrap>";
 			} else {
 				$this->output .= "<$wrap class='incomplete'>" . $title . "</$wrap>";
 			}
 		}
-		
+
 		return $this->output;
 	}
+
 /**
  * Wrapper for Form->create()
  *
- * @param string $model 
- * @param array $options 
+ * @param string $model
+ * @param array  $options
+ *
  * @return string
  */
 	public function create($model = null, $options = array()) {
-		if (!isset($options['url']) || !in_array($this->params['pass'][0], $options['url']))
-			$options['url'][] = $this->params['pass'][0];
+		if (!isset($options['url']) || !in_array($this->request->params['pass'][0], $options['url'])) {
+			$options['url'][] = $this->request->params['pass'][0];
+		}
 		return $this->Form->create($model, $options);
 	}
 }
-?>
