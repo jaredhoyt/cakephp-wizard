@@ -538,7 +538,7 @@ class WizardComponent extends Component {
 			$step = $this->_currentStep;
 		}
 		if (is_null($data)) {
-			$data = $this->controller->data;
+			$data = $this->controller->request->data;
 		}
 		$this->controller->Session->write("$this->_sessionKey.$step", $data);
 	}
