@@ -1,5 +1,5 @@
 {
-    "name": "lucasff/CakePHP-Wizard",
+    "name": "lucasff/cakephp-wizard",
     "description": "CakePHP Wizard Plugin",
     "type": "cakephp-plugin",
     "keywords": ["cakephp", "wizard"],
@@ -13,7 +13,7 @@
         }
     ],
     "replace": {
-        "lucasff/CakePHP-Wizard": "dev-master",
+        "lucasff/cakephp-wizard": "dev-master",
         "ProLoser/CakePHP-Wizard": "dev-master"
     },
     "require": {
