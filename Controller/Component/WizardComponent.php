@@ -232,7 +232,7 @@ class WizardComponent extends Component
                 $this->controller->_beforeCancel($this->_getExpectedStep());
             }
             $this->reset();
-            $this->controller->redirect($this->cancelUrl);
+            return $this->controller->redirect($this->cancelUrl);
         }
         if (isset($this->controller->request->data['Draft'])) {
             if (method_exists($this->controller, '_saveDraft')) {
@@ -241,7 +241,7 @@ class WizardComponent extends Component
             }
 
             $this->reset();
-            $this->controller->redirect($this->draftUrl);
+            return $this->controller->redirect($this->draftUrl);
         }
 
         if (empty($step)) {
@@ -250,7 +250,7 @@ class WizardComponent extends Component
                     $this->controller->_afterComplete();
                 }
                 $this->reset();
-                $this->controller->redirect($this->completeUrl);
+                return $this->controller->redirect($this->completeUrl);
             }
 
             $this->autoReset = false;
@@ -279,17 +279,17 @@ class WizardComponent extends Component
 
                         if (next($this->steps)) {
                             if ($this->autoAdvance) {
-                                $this->redirect();
+                                return $this->redirect();
                             }
-                            $this->redirect(current($this->steps));
+                            return $this->redirect(current($this->steps));
                         } else {
                             $this->controller->Session->write('Wizard.complete', $this->read());
                             $this->reset();
-                            $this->controller->redirect(array('action' => $this->action));
+                            return $this->controller->redirect(array('action' => $this->action));
                         }
                     }
                 } elseif (isset($this->controller->request->data['Previous']) && prev($this->steps)) {
-                    $this->redirect(current($this->steps));
+                    return $this->redirect(current($this->steps));
                 } elseif ($this->controller->Session->check("$this->_sessionKey._draft.current")) {
                     $this->controller->data = $this->read('_draft.current.data');
                     $this->controller->Session->delete("$this->_sessionKey._draft.current");
@@ -310,7 +310,7 @@ class WizardComponent extends Component
 
                 return $this->controller->autoRender ? $this->controller->render($this->_currentStep) : true;
             } else {
-                $this->redirect();
+                return $this->redirect();
             }
         }
 
@@ -318,7 +318,7 @@ class WizardComponent extends Component
             $this->reset();
         }
 
-        $this->redirect();
+        return $this->redirect();
     }
 
     /**
@@ -377,9 +377,9 @@ class WizardComponent extends Component
     {
         if (!empty($draft['_draft']['current']['step'])) {
             $this->restore($draft);
-            $this->redirect($draft['_draft']['current']['step']);
+            return $this->redirect($draft['_draft']['current']['step']);
         }
-        $this->redirect();
+        return $this->redirect();
     }
 
     /**
@@ -417,7 +417,7 @@ class WizardComponent extends Component
             $step = $this->_getExpectedStep();
         }
         $url = array('controller' => $this->controller->request->controller, 'action' => $this->action, $step);
-        $this->controller->redirect($url, $status, $exit);
+        return $this->controller->redirect($url, $status, $exit);
     }
 
     /**
