@@ -473,6 +473,8 @@ class WizardComponent extends Object {
 						$parsed[] = $name[$branch];
 					}
 				}
+				
+				unset($branch);
 			} else {
 				$parsed[] = $name;
 			}
