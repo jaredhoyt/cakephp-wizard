@@ -11,7 +11,3 @@ The Wizard plugin for CakePHP automates several aspects of multi-page forms incl
 ## Documentation
 
 Detailed documentation, including usage examples, can be found in the [GitHub wiki](http://github.com/jaredhoyt/cakephp-wizard/wiki).
-
-## Reporting issues
-
-If you have any issues with this plugin, please open a ticket on [Lighthouse](http://jaredhoyt.lighthouseapp.com/projects/60073-cakephp-wizard).
