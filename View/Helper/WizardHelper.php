@@ -1,161 +1,147 @@
 <?php
-
 /**
  * Wizard helper by jaredhoyt.
  *
  * Creates links, outputs step numbers for views, and creates dynamic progress menu as the wizard is completed.
  *
  * PHP versions 4 and 5
- *
  * Comments and bug reports welcome at jaredhoyt AT gmail DOT com
- *
  * Licensed under The MIT License
  *
- * @author             jaredhoyt
- * @package            Cake.View.Helper
- * @lastmodified       Date: March 11, 2009
- * @license            http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @property FormHelper $Form
+ * @property SessionHelper $Session
+ * @property HtmlHelper $Html
  */
-class WizardHelper extends AppHelper
-{
-    public $helpers = array('Session', 'Html', 'Form');
-    public $output = null;
+class WizardHelper extends AppHelper {
+	public $helpers = array(
+		'Session',
+		'Html',
+		'Form'
+	);
+	public $output = null;
 
-    /**
-     * undocumented function
-     *
-     * @param string $key optional key to retrieve the existing value
-     *
-     * @return mixed data at config key (if key is passed)
-     */
-    public function config($key = null)
-    {
-        if ($key == null) {
-            return $this->Session->read('Wizard.config');
-        } else {
-            $wizardData = $this->Session->read('Wizard.config.' . $key);
-            if (!empty($wizardData)) {
-                return $wizardData;
-            } else {
-                return null;
-            }
-        }
-    }
+/**
+ * undocumented function
+ *
+ * @param string $key optional key to retrieve the existing value
+ * @return mixed data at config key (if key is passed)
+ */
+	public function config($key = null) {
+		if ($key == null) {
+			return $this->Session->read('Wizard.config');
+		} else {
+			$wizardData = $this->Session->read('Wizard.config.' . $key);
+			if (!empty($wizardData)) {
+				return $wizardData;
+			} else {
+				return null;
+			}
+		}
+	}
 
-    /**
-     * undocumented function
-     *
-     * @param string  $title
-     * @param string  $step
-     * @param array   $htmlAttributes
-     * @param boolean $confirmMessage
-     * @param boolean $escapeTitle
-     *
-     * @return string link to a specific step
-     */
-    public function link($title, $step = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true)
-    {
-        if ($step == null) {
-            $step = $title;
-        }
-        $wizardAction = $this->config('wizardAction');
+/**
+ * undocumented function
+ *
+ * @param string       $title
+ * @param string       $step
+ * @param array|string $htmlAttributes
+ * @param bool|string  $confirmMessage
+ * @param bool|string  $escapeTitle
+ * @return string link to a specific step
+ */
+	public function link($title, $step = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
+		if ($step == null) {
+			$step = $title;
+		}
+		$wizardAction = $this->config('wizardAction');
 
-        return $this->Html->link($title, $wizardAction . $step, $htmlAttributes, $confirmMessage, $escapeTitle);
-    }
+		return $this->Html->link($title, $wizardAction . $step, $htmlAttributes, $confirmMessage, $escapeTitle);
+	}
 
-    /**
-     * Retrieve the step number of the specified step name, or the active step
-     *
-     * @param string $step       optional name of step
-     * @param int    $shiftIndex optional offset of returned array index. Default 1
-     *
-     * @return string step number. Returns false if not found
-     */
-    public function stepNumber($step = null, $shiftIndex = 1)
-    {
-        if ($step == null) {
-            $step = $this->config('activeStep');
-        }
+/**
+ * Retrieve the step number of the specified step name, or the active step
+ *
+ * @param string     $step       optional name of step
+ * @param int|string $shiftIndex optional offset of returned array index. Default 1
+ * @return string step number. Returns false if not found
+ */
+	public function stepNumber($step = null, $shiftIndex = 1) {
+		if ($step == null) {
+			$step = $this->config('activeStep');
+		}
 
-        $steps = $this->config('steps');
+		$steps = $this->config('steps');
 
-        if (in_array($step, $steps)) {
-            return array_search($step, $steps) + $shiftIndex;
-        } else {
-            return false;
-        }
-    }
+		if (in_array($step, $steps)) {
+			return array_search($step, $steps) + $shiftIndex;
+		} else {
+			return false;
+		}
+	}
 
-    public function stepTotal()
-    {
-        $steps = $this->config('steps');
+	public function stepTotal() {
+		$steps = $this->config('steps');
+		return count($steps);
+	}
 
-        return count($steps);
-    }
+/**
+ * Returns a set of html elements containing links for each step in the wizard.
+ *
+ * @param array|string $titles
+ * @param array|string $attributes pass a value for 'wrap' to change the default tag used
+ * @param array|string $htmlAttributes
+ * @param bool|string  $confirmMessage
+ * @param bool|string  $escapeTitle
+ *
+ * @return string
+ */
+	public function progressMenu($titles = array(), $attributes = array(), $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
+		$wizardConfig = $this->config();
+		extract($wizardConfig);
+		$wizardAction = $this->config('wizardAction');
 
-    /**
-     * Returns a set of html elements containing links for each step in the wizard.
-     *
-     * @param array   $titles
-     * @param array   $attributes pass a value for 'wrap' to change the default tag used
-     * @param array   $htmlAttributes
-     * @param boolean $confirmMessage
-     * @param boolean $escapeTitle
-     *
-     * @return string
-     */
-    public function progressMenu($titles = array(), $attributes = array(), $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true)
-    {
-        $wizardConfig = $this->config();
-        extract($wizardConfig);
-        $wizardAction = $this->config('wizardAction');
+		$attributes = array_merge(array('wrap' => 'div'), $attributes);
+		extract($attributes);
 
-        $attributes = array_merge(array('wrap' => 'div'), $attributes);
-        /**
-         * @var   array  $steps
-         * @var   string $expectedStep
-         * @var   string $activeStep
-         * @var   string $wrap
-         */
-        extract($attributes);
+		$incomplete = null;
 
-        $incomplete = null;
+		foreach ($steps as $title => $step) {
+			$title = empty($titles[$step]) ? $step : $titles[$step];
 
-        foreach ($steps as $title => $step) {
-            $title = empty($titles[$step]) ? $step : $titles[$step];
+			if (!$incomplete) {
+				if ($step == $expectedStep) {
+					$incomplete = true;
+					$class = 'expected';
+				} else {
+					$class = 'complete';
+				}
+				if ($step == $activeStep) {
+					$class .= ' active';
+				}
+				$this->output .= "<$wrap class='$class'>" . $this->Html->link($title, array(
+						'action' => $wizardAction,
+						$step
+					), $htmlAttributes, $confirmMessage, $escapeTitle) . "</$wrap>";
+			} else {
+				$this->output .= "<$wrap class='incomplete'>" . $title . "</$wrap>";
+			}
+		}
 
-            if (!$incomplete) {
-                if ($step == $expectedStep) {
-                    $incomplete = true;
-                    $class      = 'expected';
-                } else {
-                    $class = 'complete';
-                }
-                if ($step == $activeStep) {
-                    $class .= ' active';
-                }
-                $this->output .= "<$wrap class='$class'>" . $this->Html->link($title, array('action' => $wizardAction, $step), $htmlAttributes, $confirmMessage, $escapeTitle) . "</$wrap>";
-            } else {
-                $this->output .= "<$wrap class='incomplete'>" . $title . "</$wrap>";
-            }
-        }
+		return $this->output;
+	}
 
-        return $this->output;
-    }
-
-    /**
-     * Wrapper for Form->create()
-     *
-     * @param string $model
-     * @param array  $options
-     *
-     * @return string
-     */
-    public function create($model = null, $options = array())
-    {
-        if (!isset($options['url']) || !in_array($this->params['pass'][0], $options['url']))
-            $options['url'][] = $this->params['pass'][0];
-
-        return $this->Form->create($model, $options);
-    }
+/**
+ * Wrapper for Form->create()
+ *
+ * @param string $model
+ * @param array  $options
+ *
+ * @return string
+ */
+	public function create($model = null, $options = array()) {
+		if (!isset($options['url']) || !in_array($this->request->params['pass'][0], $options['url'])) {
+			$options['url'][] = $this->request->params['pass'][0];
+		}
+		return $this->Form->create($model, $options);
+	}
 }
