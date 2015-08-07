@@ -1,5 +1,5 @@
 {
-    "name": "lucasff/cakephp-wizard",
+    "name": "proloser/cakephp-wizard",
     "description": "CakePHP Wizard Plugin",
     "type": "cakephp-plugin",
     "keywords": ["cakephp", "wizard"],
