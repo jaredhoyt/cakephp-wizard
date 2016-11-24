@@ -13,11 +13,13 @@
  * @property HtmlHelper $Html
  */
 class WizardHelper extends AppHelper {
+
 	public $helpers = array(
 		'Session',
 		'Html',
 		'Form'
 	);
+
 	public $output = null;
 
 /**
@@ -42,20 +44,19 @@ class WizardHelper extends AppHelper {
 /**
  * undocumented function
  *
- * @param string       $title
- * @param string       $step
- * @param array|string $htmlAttributes
- * @param bool|string  $confirmMessage
- * @param bool|string  $escapeTitle
+ * @param string       $title          The content to be wrapped by `<a>` tags.
+ * @param string       $step           Form step.
+ * @param array|string $htmlAttributes Array of options and HTML attributes.
+ * @param bool|string  $confirmMessage JavaScript confirmation message. This
+ *   argument is deprecated as of 2.6. Use `confirm` key in $options instead.
  * @return string link to a specific step
  */
-	public function link($title, $step = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
+	public function link($title, $step = null, $htmlAttributes = array(), $confirmMessage = false) {
 		if ($step == null) {
 			$step = $title;
 		}
 		$wizardAction = $this->config('wizardAction');
-
-		return $this->Html->link($title, $wizardAction . $step, $htmlAttributes, $confirmMessage, $escapeTitle);
+		return $this->Html->link($title, $wizardAction . $step, $htmlAttributes, $confirmMessage);
 	}
 
 /**
@@ -69,9 +70,7 @@ class WizardHelper extends AppHelper {
 		if ($step == null) {
 			$step = $this->config('activeStep');
 		}
-
 		$steps = $this->config('steps');
-
 		if (in_array($step, $steps)) {
 			return array_search($step, $steps) + $shiftIndex;
 		} else {
@@ -79,6 +78,11 @@ class WizardHelper extends AppHelper {
 		}
 	}
 
+/**
+ * Counts the total number of steps.
+ *
+ * @return int
+ */
 	public function stepTotal() {
 		$steps = $this->config('steps');
 		return count($steps);
@@ -87,27 +91,23 @@ class WizardHelper extends AppHelper {
 /**
  * Returns a set of html elements containing links for each step in the wizard.
  *
- * @param array|string $titles
- * @param array|string $attributes pass a value for 'wrap' to change the default tag used
- * @param array|string $htmlAttributes
- * @param bool|string  $confirmMessage
- * @param bool|string  $escapeTitle
- *
+ * @param array|string $titles         Array of form steps where the keys are
+ *   the steps and the values are the titles to be used for links.
+ * @param array|string $attributes     pass a value for 'wrap' to change the default tag used
+ * @param array|string $htmlAttributes Array of options and HTML attributes.
+ * @param bool|string  $confirmMessage JavaScript confirmation message. This
+ *   argument is deprecated as of 2.6. Use `confirm` key in $options instead.
  * @return string
  */
-	public function progressMenu($titles = array(), $attributes = array(), $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
+	public function progressMenu($titles = array(), $attributes = array(), $htmlAttributes = array(), $confirmMessage = false) {
 		$wizardConfig = $this->config();
 		extract($wizardConfig);
 		$wizardAction = $this->config('wizardAction');
-
 		$attributes = array_merge(array('wrap' => 'div'), $attributes);
 		extract($attributes);
-
 		$incomplete = null;
-
 		foreach ($steps as $title => $step) {
 			$title = empty($titles[$step]) ? $step : $titles[$step];
-
 			if (!$incomplete) {
 				if ($step == $expectedStep) {
 					$incomplete = true;
@@ -121,20 +121,19 @@ class WizardHelper extends AppHelper {
 				$this->output .= "<$wrap class='$class'>" . $this->Html->link($title, array(
 						'action' => $wizardAction,
 						$step
-					), $htmlAttributes, $confirmMessage, $escapeTitle) . "</$wrap>";
+					), $htmlAttributes, $confirmMessage) . "</$wrap>";
 			} else {
 				$this->output .= "<$wrap class='incomplete'>" . $title . "</$wrap>";
 			}
 		}
-
 		return $this->output;
 	}
 
 /**
  * Wrapper for Form->create()
  *
- * @param string $model
- * @param array  $options
+ * @param string $model   The model name for which the form is being defined.
+ * @param array  $options An array of html attributes and options.
  *
  * @return string
  */
