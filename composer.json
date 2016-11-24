@@ -1,0 +1,26 @@
+{
+    "name": "proloser/cakephp-wizard",
+    "description": "CakePHP Wizard Plugin",
+    "type": "cakephp-plugin",
+    "keywords": ["cakephp", "wizard"],
+    "homepage": "https://github.com/ProLoser/CakePHP-Wizard",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dean Sofer",
+            "homepage": "https://github.com/ProLoser",
+            "role": "developer"
+        }
+    ],
+    "replace": {
+        "lucasff/cakephp-wizard": "dev-master",
+        "ProLoser/CakePHP-Wizard": "dev-master"
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "composer/installers": "*"
+    },
+    "extra": {
+        "installer-name": "Wizard"
+    }
+}
