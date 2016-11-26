@@ -4,16 +4,12 @@
 		<whitelist>
 			<directory>Wizard</directory>
 			<exclude>
-				<directory>*/Cake/*</directory>
-				<directory>*/Test/*</directory>
+				<directory>Cake</directory>
+				<directory>Composer</directory>
+				<directory>Test</directory>
 				<file>*Test.php</file>
 			</exclude>
 		</whitelist>
-		<blacklist>
-			<directory>*/Cake/*</directory>
-			<directory>*/Test/*</directory>
-			<file>*Test.php</file>
-		</blacklist>
 	</filter>
 	<logging>
 		<!-- <log type="coverage-clover" target="coverage.xml" showUncoveredFiles="true" /> -->
