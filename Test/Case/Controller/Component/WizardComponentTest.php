@@ -53,7 +53,6 @@ class WizardComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testInitialize() {
-
 	}
 
 }
