@@ -66,8 +66,8 @@ class WizardComponentTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Controller, $this->Wizard);
 		$this->Wizard->Session->delete('Wizard');
+		unset($this->Controller, $this->Wizard);
 	}
 
 /**
