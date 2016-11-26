@@ -13,7 +13,7 @@ class WizardTestController extends Controller {
 		$this->Wizard->steps = array('account', 'address', 'billing', 'review');
 	}
 
-	public function wizard($step = null) {
+	/*public function wizard($step = null) {
 		$this->Wizard->process($step);
 	}
 
@@ -31,7 +31,7 @@ class WizardTestController extends Controller {
 
 	public function _processReview() {
 		return true;
-	}
+	}*/
 
 }
 
