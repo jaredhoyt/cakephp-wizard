@@ -47,6 +47,11 @@ class WizardComponentTest extends CakeTestCase {
 		unset($this->Controller, $this->Wizard);
 	}
 
+/**
+ * Test WizardComponent::initialize().
+ *
+ * @return void
+ */
 	public function testInitialize() {
 
 	}
