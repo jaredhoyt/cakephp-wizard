@@ -190,10 +190,10 @@ class WizardComponent extends Component {
  *
  * @access public
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
+	/*public function __construct(ComponentCollection $collection, $settings = array()) {
 		parent::__construct($collection, $settings);
 		$this->_set($settings);
-	}
+	}*/
 
 /**
  * Initializes WizardComponent for use in the controller
@@ -205,7 +205,11 @@ class WizardComponent extends Component {
  */
 	public function initialize(Controller $controller) {
 		$this->controller = $controller;
-		$this->_sessionKey = $this->controller->Session->check('Wizard.complete') ? 'Wizard.complete' : 'Wizard.' . $controller->name;
+		if ($this->controller->Session->check('Wizard.complete')) {
+			$this->_sessionKey = 'Wizard.complete';
+		} else {
+			$this->_sessionKey = 'Wizard.' . $controller->name;
+		}
 		$this->_configKey = 'Wizard.config';
 		$this->_branchKey = 'Wizard.branches.' . $controller->name;
 	}
