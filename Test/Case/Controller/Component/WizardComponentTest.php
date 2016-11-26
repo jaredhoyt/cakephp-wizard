@@ -1,5 +1,4 @@
 <?php
-include('./vendor/cakephp/cakephp/lib/Cake/Core/App.php');
 App::uses('Controller', 'Controller');
 App::uses('WizardComponent', 'Wizard.Controller/Component');
 
