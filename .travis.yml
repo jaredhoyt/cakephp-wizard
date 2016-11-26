@@ -80,6 +80,10 @@ before_script:
 script:
   - ~/.composer/vendor/bin/phpcs --standard=CakePHP ./plugins/Wizard --ignore=*/vendor/* -p
   - ./lib/Cake/Console/cake test Wizard AllWizard
+  - ./lib/Cake/Console/cake test Wizard AllWizard --coverage-clover=clover.xml
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 notifications:
   email: false

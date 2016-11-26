@@ -9,8 +9,28 @@ App::uses('WizardComponent', 'Wizard.Controller/Component');
  */
 class WizardTestController extends Controller {
 
-	/*public function beforeFilter() {
+	public function beforeFilter() {
 		$this->Wizard->steps = array('account', 'address', 'billing', 'review');
+	}
+
+	/*public function wizard($step = null) {
+		$this->Wizard->process($step);
+	}
+
+	public function _processAccount() {
+		return true;
+	}
+
+	public function _processAddress() {
+		return true;
+	}
+
+	public function _processBilling() {
+		return true;
+	}
+
+	public function _processReview() {
+		return true;
 	}*/
 
 }
@@ -18,6 +38,7 @@ class WizardTestController extends Controller {
 /**
  * WizardComponentTest class
  *
+ * @property WizardComponent $Wizard
  * @package       Wizard.Test.Case.Controller.Component
  */
 class WizardComponentTest extends CakeTestCase {
@@ -34,7 +55,8 @@ class WizardComponentTest extends CakeTestCase {
 		$ComponentCollection = new ComponentCollection();
 		$ComponentCollection->init($this->Controller);
 		$this->Wizard = new WizardComponent($ComponentCollection);
-		$this->Controller->Components->init($this->Controller);
+		//$this->Controller->Components->init($this->Controller);
+		$this->Wizard->initialize($this->Controller);
 	}
 
 /**
@@ -44,6 +66,7 @@ class WizardComponentTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		$this->Wizard->Session->delete('Wizard');
 		unset($this->Controller, $this->Wizard);
 	}
 
@@ -53,6 +76,7 @@ class WizardComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testInitialize() {
+		$this->assertTrue($this->Wizard->controller instanceof WizardTestController);
 	}
 
 }
