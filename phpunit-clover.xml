@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit encoding="utf-8">
+	<filter>
+		<whitelist>
+			<directory>Wizard</directory>
+		</whitelist>
+		<blacklist>
+			<directory>Cake</directory>
+			<file>*Test.php</file>
+		</blacklist>
+	</filter>
+	<logging>
+		<log type="coverage-clover" target="coverage.xml" showUncoveredFiles="true" />
+	</logging>
+</phpunit>
