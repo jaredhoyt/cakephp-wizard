@@ -78,7 +78,7 @@ before_script:
     }" > ../cakephp/app/Config/database.php
 
 script:
-  - ~/.composer/vendor/bin/phpcs --standard=CakePHP /home/valera/git/cakephp-wizard --ignore=*/vendor/* -p
+  - ~/.composer/vendor/bin/phpcs --standard=CakePHP ./plugins/Wizard --ignore=*/vendor/* -p
   - ./lib/Cake/Console/cake test Wizard AllWizard
 
 notifications:
