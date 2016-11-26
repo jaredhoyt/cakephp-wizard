@@ -2,7 +2,9 @@
 <phpunit encoding="utf-8">
 	<filter>
 		<whitelist>
-			<directory>Wizard</directory>
+			<directory>Controller</directory>
+			<directory>Model</directory>
+			<directory>View</directory>
 			<exclude>
 				<directory>Cake</directory>
 				<directory>Composer</directory>
@@ -13,6 +15,6 @@
 	</filter>
 	<logging>
 		<log type="coverage-text" target="php://stdout" />
-		<log type="coverage-clover" target="coverage.xml" showUncoveredFiles="true" />
+		<log type="coverage-clover" target="coverage.xml" />
 	</logging>
 </phpunit>
