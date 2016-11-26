@@ -3,6 +3,11 @@
 	<filter>
 		<whitelist>
 			<directory>Wizard</directory>
+			<exclude>
+				<directory>*/Cake/*</directory>
+				<directory>*/Test/*</directory>
+				<file>*Test.php</file>
+			</exclude>
 		</whitelist>
 		<blacklist>
 			<directory>*/Cake/*</directory>
@@ -12,6 +17,6 @@
 	</filter>
 	<logging>
 		<!-- <log type="coverage-clover" target="coverage.xml" showUncoveredFiles="true" /> -->
-		<log type="coverage-text" showUncoveredFiles="true" />
+		<log type="coverage-text" />
 	</logging>
 </phpunit>
