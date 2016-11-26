@@ -5,7 +5,8 @@
 			<directory>Wizard</directory>
 		</whitelist>
 		<blacklist>
-			<directory>Cake</directory>
+			<directory>*/Cake/*</directory>
+			<directory>*/Test/*</directory>
 			<file>*Test.php</file>
 		</blacklist>
 	</filter>
