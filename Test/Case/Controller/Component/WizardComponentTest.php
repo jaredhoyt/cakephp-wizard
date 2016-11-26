@@ -79,4 +79,18 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertTrue($this->Wizard->controller instanceof WizardTestController);
 	}
 
+	public function testConfig() {
+		$steps = array('account', 'review');
+		$result = $this->Wizard->config('steps', $steps);
+		$this->assertEquals($steps, $result);
+		$expectedSession = array(
+			'config' => array(
+				'steps' => $steps,
+			),
+		);
+		$sessionDetails = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $sessionDetails);
+		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEquals($steps, $configSteps);
+	}
 }

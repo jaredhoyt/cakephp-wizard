@@ -2,13 +2,13 @@
 language: php
 
 php:
-  - 5.5
+#  - 5.5
   - 5.6
-  - 7.0
-  - 7.1
+#  - 7.0
+#  - 7.1
 
 env:
-  - CAKE_VERSION=2.8.0 DB=mysql
+#  - CAKE_VERSION=2.8.0 DB=mysql
   - CAKE_VERSION=2.9.2 DB=mysql
 
 install:
@@ -79,8 +79,7 @@ before_script:
 
 script:
   - ~/.composer/vendor/bin/phpcs --standard=CakePHP ./plugins/Wizard --ignore=*/vendor/* -p
-  - ./lib/Cake/Console/cake test Wizard AllWizard
-  - ./lib/Cake/Console/cake test Wizard AllWizard --coverage-clover=clover.xml
+  - ./lib/Cake/Console/cake test Wizard AllWizard --configuration=./plugins/Wizard/phpunit-clover.xml --stderr
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
