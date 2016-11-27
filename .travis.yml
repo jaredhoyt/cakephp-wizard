@@ -83,7 +83,7 @@ script:
 
 after_success:
 #  - bash <(curl -s https://codecov.io/bash)
-  - cd cakephp && bash <(curl -s https://codecov.io/bash) -f ../plugins/Wizard/coverage.xml
+  - cd ./plugins/Wizard && bash <(curl -s https://codecov.io/bash)
 
 notifications:
   email: false
