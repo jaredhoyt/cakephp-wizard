@@ -219,4 +219,37 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEquals($expectedSteps, $resultSteps);
 		$this->assertEquals($expectedSteps, $this->Wizard->steps);
 	}
+
+	public function testStartupBranch() {
+		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEmpty($configSteps);
+		$this->assertEmpty($this->Wizard->steps);
+
+		$this->Wizard->steps = array(
+			'step1',
+			'step2',
+			'gender',
+			array(
+				'male' => array('step3', 'step4'),
+				'female' => array('step4', 'step5'),
+				'unknown' => 'step6',
+			),
+			'confirmation',
+		);
+		$this->Wizard->branch('female');
+		$this->Wizard->action = 'gender';
+		$this->Wizard->startup($this->Controller);
+
+		$expectedSteps = array(
+			'step1',
+			'step2',
+			'gender',
+			'step4',
+			'step5',
+			'confirmation',
+		);
+		$resultSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEquals($expectedSteps, $resultSteps);
+		$this->assertEquals($expectedSteps, $this->Wizard->steps);
+	}
 }
