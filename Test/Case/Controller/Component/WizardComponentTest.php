@@ -144,4 +144,13 @@ class WizardComponentTest extends CakeTestCase {
 		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
 		$this->assertEquals($expectedBranches, $sessionBranches);
 	}
+
+	public function testStartup() {
+		$configAction = $this->Wizard->Session->read('Wizard.config.action');
+		$this->assertEmpty($configAction);
+		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEmpty($configSteps);
+		$this->assertEmpty($this->Wizard->steps);
+		$this->assertEmpty($this->Wizard->controller->helpers);
+	}
 }
