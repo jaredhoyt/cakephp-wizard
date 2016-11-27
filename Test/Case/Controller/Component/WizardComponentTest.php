@@ -10,7 +10,16 @@ App::uses('WizardComponent', 'Wizard.Controller/Component');
 class WizardTestController extends Controller {
 
 	public function beforeFilter() {
-		$this->Wizard->steps = array('account', 'address', 'billing', 'review');
+		//$this->Wizard->steps = array('account', 'address', 'billing', 'review');
+		$this->Wizard->steps = array(
+			'step1',
+			'step2',
+			'gender',
+			array(
+				'male' => array('step3', 'step4'),
+				'female' => array('step4', 'step5'),
+			),
+		);
 	}
 
 	/*public function wizard($step = null) {
@@ -89,5 +98,14 @@ class WizardComponentTest extends CakeTestCase {
 
 		$result = $this->Wizard->config('steps');
 		$this->assertEquals($steps, $result);
+	}
+
+	public function testBranch() {
+		$this->Wizard-branch('female');
+		$expectedBranches = array(
+			'female' => 'branch',
+		);
+		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
+		$this->assertEquals($steps, $sessionBranches);
 	}
 }

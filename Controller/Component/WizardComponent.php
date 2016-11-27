@@ -2,7 +2,8 @@
 /**
  * Wizard component by jaredhoyt.
  *
- * Handles multi-step form navigation, data persistence, validation callbacks, and plot-branching navigation.
+ * Handles multi-step form navigation, data persistence, validation callbacks,
+ * and plot-branching navigation.
  *
  * PHP versions 4 and 5
  *
@@ -10,7 +11,7 @@
  *
  * Licensed under The MIT License
  *
- * @property $Session SessionComponent
+ * @property SessionComponent $Session
  * @writtenby          jaredhoyt
  * @license            http://www.opensource.org/licenses/mit-license.php The MIT License
  */
@@ -58,14 +59,29 @@ class WizardComponent extends Component {
 
 /**
  * List of steps, in order, that are to be included in the wizard.
- *        basic example: $steps = array('contact', 'payment', 'confirm');
+ * Basic example:
+ * <code>
+ * $steps = array('contact', 'payment', 'confirm');
+ * </code>
  *
- * The $steps array can also contain nested steps arrays of the same format but must be wrapped by a branch group.
- *        plot-branched example: $steps = array('job_application', array('degree' => array('college', 'degree_type'), 'nodegree' => 'experience'), 'confirm');
+ * The $steps array can also contain nested steps arrays of the same format but
+ * must be wrapped by a branch group.
+ * Plot-branched example:
+ * <code>
+ * $steps = array(
+ *     'job_application',
+ *         array(
+ *             'degree' => array('college', 'degree_type'),
+ *             'nodegree' => 'experience'
+ *         ),
+ *         'confirm',
+ *     );
+ * </code>
  *
- * The 'branchnames' (ie 'degree', 'nodegree') are arbitrary but used as selectors for the branch() and unbranch() methods. Branches
- * can point to either another steps array or a single step. The first branch in a group that hasn't been skipped (see branch())
- * is included by default (if $defaultBranch = true).
+ * The 'branchnames' (ie 'degree', 'nodegree') are arbitrary but used as selectors
+ * for the branch() and unbranch() methods. Branches can point to either another
+ * steps array or a single step. The first branch in a group that hasn't been
+ * skipped (see branch()) is included by default (if $defaultBranch = true).
  *
  * @var array
  * @access public
@@ -555,7 +571,8 @@ class WizardComponent extends Component {
 	}
 
 /**
- * Selects a branch to be used in the steps array. The first branch in a group is included by default.
+ * Selects a branch to be used in the steps array. The first branch in a group
+ * is included by default.
  *
  * @param string  $name Branch name to be included in steps.
  * @param bool $skip Branch will be skipped instead of included if true.
@@ -571,7 +588,11 @@ class WizardComponent extends Component {
 		if (isset($branches[$name])) {
 			unset($branches[$name]);
 		}
-		$value = $skip ? 'skip' : 'branch';
+		if ($skip) {
+			$value = 'skip';
+		} else {
+			$value = 'branch';
+		}
 		$branches[$name] = $value;
 		$this->controller->Session->write($this->_branchKey, $branches);
 	}
