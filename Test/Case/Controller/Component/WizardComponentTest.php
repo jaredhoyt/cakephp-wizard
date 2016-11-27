@@ -26,40 +26,37 @@ class WizardTestController extends Controller {
 		),
 	);
 
-	/*public function beforeFilter() {
-		parent::beforeFilter();
-		$this->Wizard->steps = array(
-			'step1',
-			'step2',
-			'gender',
-			array(
-				'male' => array('step3', 'step4'),
-				'female' => array('step4', 'step5'),
-				'unknown' => 'step6',
-			),
-			'confirmation',
-		);
-	}*/
-
-	/*public function wizard($step = null) {
+	public function wizard($step = null) {
 		$this->Wizard->process($step);
 	}
 
-	public function _processAccount() {
+	public function _processStep1() {
 		return true;
 	}
 
-	public function _processAddress() {
+	public function _processStep2() {
 		return true;
 	}
 
-	public function _processBilling() {
+	public function _processStep3() {
 		return true;
 	}
 
-	public function _processReview() {
+	public function _processStep4() {
 		return true;
-	}*/
+	}
+
+	public function _processStep5() {
+		return true;
+	}
+
+	public function _processGender() {
+		return true;
+	}
+
+	public function _processConfirmation() {
+		return true;
+	}
 
 }
 
@@ -82,7 +79,6 @@ class WizardComponentTest extends CakeTestCase {
 		$this->Controller = new WizardTestController($CakeRequest, $this->getMock('CakeResponse'));
 		$ComponentCollection = new ComponentCollection();
 		$ComponentCollection->init($this->Controller);
-		//$this->Wizard = new WizardComponent($ComponentCollection);
 		$this->Controller->Components->init($this->Controller);
 		$this->Wizard = $this->Controller->Wizard;
 		$this->Wizard->initialize($this->Controller);
