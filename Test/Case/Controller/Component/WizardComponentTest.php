@@ -9,6 +9,8 @@ App::uses('WizardComponent', 'Wizard.Controller/Component');
  */
 class WizardTestController extends Controller {
 
+	public $components = array('Session', 'Wizard.Wizard');
+
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Wizard->steps = array(
