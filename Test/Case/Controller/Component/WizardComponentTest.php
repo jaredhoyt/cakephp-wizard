@@ -106,6 +106,6 @@ class WizardComponentTest extends CakeTestCase {
 			'female' => 'branch',
 		);
 		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
-		$this->assertEquals($steps, $sessionBranches);
+		$this->assertEquals($expectedBranches, $sessionBranches);
 	}
 }
