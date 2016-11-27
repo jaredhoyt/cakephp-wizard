@@ -10,7 +10,7 @@ App::uses('WizardComponent', 'Wizard.Controller/Component');
 class WizardTestController extends Controller {
 
 	public function beforeFilter() {
-		//$this->Wizard->steps = array('account', 'address', 'billing', 'review');
+		parent::beforeFilter();
 		$this->Wizard->steps = array(
 			'step1',
 			'step2',
@@ -18,7 +18,9 @@ class WizardTestController extends Controller {
 			array(
 				'male' => array('step3', 'step4'),
 				'female' => array('step4', 'step5'),
+				'unknown' => 'step6',
 			),
+			'confirmation',
 		);
 	}
 
@@ -64,7 +66,7 @@ class WizardComponentTest extends CakeTestCase {
 		$ComponentCollection = new ComponentCollection();
 		$ComponentCollection->init($this->Controller);
 		$this->Wizard = new WizardComponent($ComponentCollection);
-		//$this->Controller->Components->init($this->Controller);
+		$this->Controller->Components->init($this->Controller);
 		$this->Wizard->initialize($this->Controller);
 	}
 
