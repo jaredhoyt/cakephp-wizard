@@ -144,4 +144,112 @@ class WizardComponentTest extends CakeTestCase {
 		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
 		$this->assertEquals($expectedBranches, $sessionBranches);
 	}
+
+	public function testStartup() {
+		$configAction = $this->Wizard->Session->read('Wizard.config.action');
+		$this->assertEmpty($configAction);
+		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEmpty($configSteps);
+		$this->assertEmpty($this->Wizard->steps);
+		$this->assertEmpty($this->Wizard->controller->helpers);
+
+		$this->Wizard->steps = array(
+			'step1',
+			'step2',
+			'gender',
+			array(
+				'male' => array('step3', 'step4'),
+				'female' => array('step4', 'step5'),
+				'unknown',
+			),
+			'confirmation',
+		);
+		$this->Wizard->action = 'gender';
+		$this->Wizard->startup($this->Controller);
+
+		$expectedAction = 'gender';
+		$resultAction = $this->Wizard->Session->read('Wizard.config.action');
+		$this->assertEquals($expectedAction, $resultAction);
+		$expectedSteps = array(
+			'step1',
+			'step2',
+			'gender',
+			'step3',
+			'step4',
+			'confirmation',
+		);
+		$resultSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEquals($expectedSteps, $resultSteps);
+		$this->assertEquals($expectedSteps, $this->Wizard->steps);
+		$expectedHelpers = array(
+			'Wizard.Wizard',
+		);
+		$this->assertEquals($expectedHelpers, $this->Wizard->controller->helpers);
+	}
+
+	public function testStartupSkipBranch() {
+		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEmpty($configSteps);
+		$this->assertEmpty($this->Wizard->steps);
+
+		$this->Wizard->steps = array(
+			'step1',
+			'step2',
+			'gender',
+			array(
+				'male' => array('step3', 'step4'),
+				'female' => array('step4', 'step5'),
+				'unknown' => 'step6',
+			),
+			'confirmation',
+		);
+		$this->Wizard->branch('male', true);
+		$this->Wizard->branch('female', true);
+		$this->Wizard->action = 'gender';
+		$this->Wizard->startup($this->Controller);
+
+		$expectedSteps = array(
+			'step1',
+			'step2',
+			'gender',
+			'step6',
+			'confirmation',
+		);
+		$resultSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEquals($expectedSteps, $resultSteps);
+		$this->assertEquals($expectedSteps, $this->Wizard->steps);
+	}
+
+	public function testStartupBranch() {
+		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEmpty($configSteps);
+		$this->assertEmpty($this->Wizard->steps);
+
+		$this->Wizard->steps = array(
+			'step1',
+			'step2',
+			'gender',
+			array(
+				'male' => array('step3', 'step4'),
+				'female' => array('step4', 'step5'),
+				'unknown' => 'step6',
+			),
+			'confirmation',
+		);
+		$this->Wizard->branch('female');
+		$this->Wizard->action = 'gender';
+		$this->Wizard->startup($this->Controller);
+
+		$expectedSteps = array(
+			'step1',
+			'step2',
+			'gender',
+			'step4',
+			'step5',
+			'confirmation',
+		);
+		$resultSteps = $this->Wizard->Session->read('Wizard.config.steps');
+		$this->assertEquals($expectedSteps, $resultSteps);
+		$this->assertEquals($expectedSteps, $this->Wizard->steps);
+	}
 }
