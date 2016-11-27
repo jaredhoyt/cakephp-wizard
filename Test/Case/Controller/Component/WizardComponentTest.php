@@ -10,7 +10,16 @@ App::uses('WizardComponent', 'Wizard.Controller/Component');
 class WizardTestController extends Controller {
 
 	public function beforeFilter() {
-		$this->Wizard->steps = array('account', 'address', 'billing', 'review');
+		//$this->Wizard->steps = array('account', 'address', 'billing', 'review');
+		$this->Wizard->steps = array(
+			'step1',
+			'step2',
+			'gender',
+			array(
+				'male' => array('step3', 'step4'),
+				'female' => array('step4', 'step5'),
+			),
+		);
 	}
 
 	/*public function wizard($step = null) {
@@ -83,14 +92,56 @@ class WizardComponentTest extends CakeTestCase {
 		$steps = array('account', 'review');
 		$result = $this->Wizard->config('steps', $steps);
 		$this->assertEquals($steps, $result);
-		$expectedSession = array(
-			'config' => array(
-				'steps' => $steps,
-			),
-		);
-		$sessionDetails = $this->Wizard->Session->read('Wizard');
-		$this->assertEquals($expectedSession, $sessionDetails);
+
 		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEquals($steps, $configSteps);
+
+		$result = $this->Wizard->config('steps');
+		$this->assertEquals($steps, $result);
+	}
+
+	public function testBranch() {
+		$this->Wizard->branch('female');
+		$expectedBranches = array(
+			'WizardTest' => array(
+				'female' => 'branch',
+			),
+		);
+		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
+		$this->assertEquals($expectedBranches, $sessionBranches);
+	}
+
+	public function testBranchSkip() {
+		$this->Wizard->branch('female', true);
+		$expectedBranches = array(
+			'WizardTest' => array(
+				'female' => 'skip',
+			),
+		);
+		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
+		$this->assertEquals($expectedBranches, $sessionBranches);
+	}
+
+	public function testBranchOverwrite() {
+		$this->Wizard->branch('male');
+		$this->Wizard->branch('female');
+		$expectedBranches = array(
+			'WizardTest' => array(
+				'male' => 'branch',
+				'female' => 'branch',
+			),
+		);
+		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
+		$this->assertEquals($expectedBranches, $sessionBranches);
+
+		$this->Wizard->branch('male', true);
+		$expectedBranches = array(
+			'WizardTest' => array(
+				'male' => 'skip',
+				'female' => 'branch',
+			),
+		);
+		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
+		$this->assertEquals($expectedBranches, $sessionBranches);
 	}
 }
