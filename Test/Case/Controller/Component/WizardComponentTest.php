@@ -30,7 +30,7 @@ class WizardTestController extends Controller {
 		$this->Wizard->process($step);
 	}
 
-	public function _processStep1() {
+	/*public function _processStep1() {
 		return true;
 	}
 
@@ -56,7 +56,7 @@ class WizardTestController extends Controller {
 
 	public function _processConfirmation() {
 		return true;
-	}
+	}*/
 
 }
 
