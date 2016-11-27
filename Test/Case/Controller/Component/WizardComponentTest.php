@@ -199,7 +199,7 @@ class WizardComponentTest extends CakeTestCase {
 			array(
 				'male' => array('step3', 'step4'),
 				'female' => array('step4', 'step5'),
-				'unknown',
+				'unknown' => 'step6',
 			),
 			'confirmation',
 		);
@@ -212,7 +212,7 @@ class WizardComponentTest extends CakeTestCase {
 			'step1',
 			'step2',
 			'gender',
-			'unknown',
+			'step6',
 			'confirmation',
 		);
 		$resultSteps = $this->Wizard->Session->read('Wizard.config.steps');
