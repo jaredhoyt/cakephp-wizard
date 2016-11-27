@@ -110,4 +110,39 @@ class WizardComponentTest extends CakeTestCase {
 		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
 		$this->assertEquals($expectedBranches, $sessionBranches);
 	}
+
+	public function testBranchSkip() {
+		$this->Wizard->branch('female', true);
+		$expectedBranches = array(
+			'WizardTest' => array(
+				'female' => 'skip',
+			),
+		);
+		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
+		$this->assertEquals($expectedBranches, $sessionBranches);
+	}
+
+	public function testBranchOverwrite() {
+		$this->Wizard->branch('male');
+		$this->Wizard->branch('female');
+		$expectedBranches = array(
+			'WizardTest' => array(
+				'male' => 'branch',
+				'female' => 'branch',
+			),
+		);
+		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
+		$this->assertEquals($expectedBranches, $sessionBranches);
+
+		$this->Wizard->branch('male', true);
+		$expectedBranches = array(
+			'WizardTest' => array(
+				'male' => 'skip',
+				'female' => 'branch',
+			),
+		);
+		$sessionBranches = $this->Wizard->Session->read('Wizard.branches');
+		$this->assertEquals($expectedBranches, $sessionBranches);
+
+	}
 }

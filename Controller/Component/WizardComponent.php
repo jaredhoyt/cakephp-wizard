@@ -585,9 +585,6 @@ class WizardComponent extends Component {
 		if ($this->controller->Session->check($this->_branchKey)) {
 			$branches = $this->controller->Session->read($this->_branchKey);
 		}
-		if (isset($branches[$name])) {
-			unset($branches[$name]);
-		}
 		if ($skip) {
 			$value = 'skip';
 		} else {
