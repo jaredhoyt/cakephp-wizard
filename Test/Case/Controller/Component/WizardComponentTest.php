@@ -170,7 +170,6 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($configAction);
 		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEmpty($configSteps);
-		$this->assertEmpty($this->Wizard->steps);
 		$this->assertEmpty($this->Wizard->controller->helpers);
 
 		$this->Wizard->steps = array(
@@ -210,7 +209,6 @@ class WizardComponentTest extends CakeTestCase {
 	public function testStartupSkipBranch() {
 		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEmpty($configSteps);
-		$this->assertEmpty($this->Wizard->steps);
 
 		$this->Wizard->steps = array(
 			'step1',
@@ -243,7 +241,6 @@ class WizardComponentTest extends CakeTestCase {
 	public function testStartupBranch() {
 		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEmpty($configSteps);
-		$this->assertEmpty($this->Wizard->steps);
 
 		$this->Wizard->steps = array(
 			'step1',
