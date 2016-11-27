@@ -172,17 +172,6 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($configSteps);
 		$this->assertEmpty($this->Wizard->controller->helpers);
 
-		$this->Wizard->steps = array(
-			'step1',
-			'step2',
-			'gender',
-			array(
-				'male' => array('step3', 'step4'),
-				'female' => array('step4', 'step5'),
-				'unknown',
-			),
-			'confirmation',
-		);
 		$this->Wizard->action = 'gender';
 		$this->Wizard->startup($this->Controller);
 
@@ -210,17 +199,6 @@ class WizardComponentTest extends CakeTestCase {
 		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEmpty($configSteps);
 
-		$this->Wizard->steps = array(
-			'step1',
-			'step2',
-			'gender',
-			array(
-				'male' => array('step3', 'step4'),
-				'female' => array('step4', 'step5'),
-				'unknown' => 'step6',
-			),
-			'confirmation',
-		);
 		$this->Wizard->branch('male', true);
 		$this->Wizard->branch('female', true);
 		$this->Wizard->action = 'gender';
@@ -242,17 +220,6 @@ class WizardComponentTest extends CakeTestCase {
 		$configSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEmpty($configSteps);
 
-		$this->Wizard->steps = array(
-			'step1',
-			'step2',
-			'gender',
-			array(
-				'male' => array('step3', 'step4'),
-				'female' => array('step4', 'step5'),
-				'unknown' => 'step6',
-			),
-			'confirmation',
-		);
 		$this->Wizard->branch('female');
 		$this->Wizard->action = 'gender';
 		$this->Wizard->startup($this->Controller);
