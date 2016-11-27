@@ -82,7 +82,8 @@ script:
   - ./lib/Cake/Console/cake test Wizard AllWizard --configuration=./plugins/Wizard/phpunit-clover.xml --stderr
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+#  - bash <(curl -s https://codecov.io/bash)
+  - cd cakephp && bash <(curl -s https://codecov.io/bash) -f ../plugins/Wizard/coverage.xml
 
 notifications:
   email: false
