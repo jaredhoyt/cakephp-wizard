@@ -153,17 +153,17 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($this->Wizard->steps);
 		$this->assertEmpty($this->Wizard->controller->helpers);
 
-		$steps = array(
+		$this->Wizard->steps = array(
 			'step1',
 			'step2',
 			'gender',
 			array(
 				'male' => array('step3', 'step4'),
 				'female' => array('step4', 'step5'),
+				'unknown' => 'step4',
 			),
 			'confirmation',
 		);
-		$this->Wizard->steps = $steps;
 		$this->Wizard->action = 'gender';
 		$this->Wizard->startup($this->Controller);
 
