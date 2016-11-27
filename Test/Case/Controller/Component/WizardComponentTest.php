@@ -9,9 +9,22 @@ App::uses('WizardComponent', 'Wizard.Controller/Component');
  */
 class WizardTestController extends Controller {
 
-	public $components = array('Session', 'Wizard.Wizard');
+	public $components = array(
+		'Session',
+		'Wizard.Wizard' => array(
+			'step1',
+			'step2',
+			'gender',
+			array(
+				'male' => array('step3', 'step4'),
+				'female' => array('step4', 'step5'),
+				'unknown' => 'step6',
+			),
+			'confirmation',
+		),
+	);
 
-	public function beforeFilter() {
+	/*public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Wizard->steps = array(
 			'step1',
@@ -24,7 +37,7 @@ class WizardTestController extends Controller {
 			),
 			'confirmation',
 		);
-	}
+	}*/
 
 	/*public function wizard($step = null) {
 		$this->Wizard->process($step);
