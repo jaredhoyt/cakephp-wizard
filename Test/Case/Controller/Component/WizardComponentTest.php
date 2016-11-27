@@ -181,7 +181,9 @@ class WizardComponentTest extends CakeTestCase {
 		$resultSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEquals($expectedSteps, $resultSteps);
 		$this->assertEquals($expectedSteps, $this->Wizard->steps);
-		$expectedHelpers = array();
+		$expectedHelpers = array(
+			'Wizard.Wizard',
+		);
 		$this->assertEquals($expectedHelpers, $this->Wizard->controller->helpers);
 	}
 }
