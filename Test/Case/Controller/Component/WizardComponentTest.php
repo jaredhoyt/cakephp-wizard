@@ -165,7 +165,7 @@ class WizardComponentTest extends CakeTestCase {
 		);
 		$this->Wizard->steps = $steps;
 		$this->Wizard->action = 'account';
-		$this->Wizard->startup(null);
+		$this->Wizard->startup($this->Controller);
 
 		$expectedAction = 'account';
 		$resultAction = $this->Wizard->Session->read('Wizard.config.action');
