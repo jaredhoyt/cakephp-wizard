@@ -313,7 +313,6 @@ class WizardComponent extends Component {
  */
 	public function config($name, $value = null) {
 		if ($value == null) {
-			// $this->controller->Session->read("$this->_configKey")
 			return $this->controller->Session->read("$this->_configKey.$name");
 		}
 		$this->controller->Session->write("$this->_configKey.$name", $value);
