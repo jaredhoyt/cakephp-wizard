@@ -12,15 +12,17 @@ class WizardTestController extends Controller {
 	public $components = array(
 		'Session',
 		'Wizard.Wizard' => array(
-			'step1',
-			'step2',
-			'gender',
-			array(
-				'male' => array('step3', 'step4'),
-				'female' => array('step4', 'step5'),
-				'unknown' => 'step6',
+			'steps' => array(
+				'step1',
+				'step2',
+				'gender',
+				array(
+					'male' => array('step3', 'step4'),
+					'female' => array('step4', 'step5'),
+					'unknown' => 'step6',
+				),
+				'confirmation',
 			),
-			'confirmation',
 		),
 	);
 
