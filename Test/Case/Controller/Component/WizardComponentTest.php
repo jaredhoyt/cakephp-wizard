@@ -65,8 +65,9 @@ class WizardComponentTest extends CakeTestCase {
 		$this->Controller = new WizardTestController($CakeRequest, $this->getMock('CakeResponse'));
 		$ComponentCollection = new ComponentCollection();
 		$ComponentCollection->init($this->Controller);
-		$this->Wizard = new WizardComponent($ComponentCollection);
+		//$this->Wizard = new WizardComponent($ComponentCollection);
 		$this->Controller->Components->init($this->Controller);
+		$this->Wizard = $this->Controller->Wizard;
 		$this->Wizard->initialize($this->Controller);
 	}
 
