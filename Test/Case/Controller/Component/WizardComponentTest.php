@@ -101,7 +101,7 @@ class WizardComponentTest extends CakeTestCase {
 	}
 
 	public function testBranch() {
-		$this->Wizard-branch('female');
+		$this->Wizard->branch('female');
 		$expectedBranches = array(
 			'female' => 'branch',
 		);
