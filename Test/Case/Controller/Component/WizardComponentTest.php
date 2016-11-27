@@ -160,7 +160,7 @@ class WizardComponentTest extends CakeTestCase {
 			array(
 				'male' => array('step3', 'step4'),
 				'female' => array('step4', 'step5'),
-				'unknown' => 'step4',
+				'step6',
 			),
 			'confirmation',
 		);
