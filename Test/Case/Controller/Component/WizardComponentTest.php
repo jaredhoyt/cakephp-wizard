@@ -92,7 +92,7 @@ class WizardTestController extends Controller {
 		return true;
 	}
 
-	protected function _afterComplete() {
+	public function _afterComplete() {
 	}
 
 	public function redirect($url = null, $status = null, $exit = true) {
