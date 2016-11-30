@@ -1,4 +1,6 @@
 <?php
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
 App::uses('Controller', 'Controller');
 App::uses('Router', 'Routing');
 App::uses('WizardComponent', 'Wizard.Controller/Component');
@@ -101,9 +103,9 @@ class WizardComponentTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$CakeRequest = new CakeRequest(null, false);
-		$CakeResponse = new CakeResponse();
+// 		$CakeResponse = new CakeResponse();
+		$CakeResponse = $this->getMock('CakeResponse', array('send'));
 		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
-// 		$this->Controller = new WizardTestController($CakeRequest, $this->getMock('CakeResponse'));
 		$ComponentCollection = new ComponentCollection();
 		$ComponentCollection->init($this->Controller);
 		$this->Controller->Components->init($this->Controller);
@@ -302,7 +304,7 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertInstanceOf('CakeResponse', $CakeResponse);
 		$header = $CakeResponse->header();
 		$this->assertEquals(array('xxx'), $header);
-		$this->assertContains('/xxx', $header['Location']);
+		$this->assertContains('/wizard/step2', $header['Location']);
 
 		$expectedSession = array(
 			'config' => array(
