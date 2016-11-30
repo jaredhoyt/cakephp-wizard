@@ -556,7 +556,7 @@ class WizardComponent extends Component {
 		echo "status: $status\n";
 		echo "exit: $exit\n";
 		$url = array(
-			'controller' => $this->controller->request->controller,
+			//'controller' => $this->controller->request->controller,
 			'action' => $this->action,
 			$step
 		);
