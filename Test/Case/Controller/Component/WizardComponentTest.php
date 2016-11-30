@@ -338,7 +338,7 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEquals($expectedSession, $resultSession);
 	}
 
-	public function testStepAutovalidate() {
+	public function testStepAutovalidatePost() {
 		// Set session prerequisites.
 		$session = array(
 			'config' => array(
@@ -392,6 +392,72 @@ class WizardComponentTest extends CakeTestCase {
 				'step1' => array(),
 				'step2' => array(),
 				'gender' => $postData,
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+	public function testStepLastPost() {
+		// Set session prerequisites.
+		$session = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'confirmation',
+				'activeStep' => 'confirmation',
+			),
+			'WizardTest' => array(
+				'step1' => array(),
+				'step2' => array(),
+				'gender' => array(),
+				'step3' => array(),
+				'step4' => array(),
+			),
+		);
+		$this->Wizard->Session->write('Wizard', $session);
+
+		$this->Wizard->startup($this->Controller);
+		$postData = array(
+			'WizardUserMock' => array(
+				'confirm' => '1',
+			),
+		);
+		$this->Wizard->controller->request->data = $postData;
+		$CakeResponse = $this->Wizard->process('confirmation');
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard/step1', $headers['Location']);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step3',
+				'activeStep' => 'gender',
+			),
+			'WizardTest' => array(
+				'step1' => array(),
+				'step2' => array(),
+				'gender' => array(),
+				'step3' => array(),
+				'step4' => array(),
+				'confirmation' => $postData,
 			),
 		);
 		$resultSession = $this->Wizard->Session->read('Wizard');
