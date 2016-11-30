@@ -188,10 +188,9 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($configSteps);
 		$this->assertEmpty($this->Wizard->controller->helpers);
 
-		$this->Wizard->action = 'gender';
 		$this->Wizard->startup($this->Controller);
 
-		$expectedAction = 'gender';
+		$expectedAction = 'wizard';
 		$resultAction = $this->Wizard->Session->read('Wizard.config.action');
 		$this->assertEquals($expectedAction, $resultAction);
 		$expectedSteps = array(
@@ -217,7 +216,6 @@ class WizardComponentTest extends CakeTestCase {
 
 		$this->Wizard->branch('male', true);
 		$this->Wizard->branch('female', true);
-		$this->Wizard->action = 'gender';
 		$this->Wizard->startup($this->Controller);
 
 		$expectedSteps = array(
@@ -237,7 +235,6 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($configSteps);
 
 		$this->Wizard->branch('female');
-		$this->Wizard->action = 'gender';
 		$this->Wizard->startup($this->Controller);
 
 		$expectedSteps = array(
@@ -253,11 +250,10 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEquals($expectedSteps, $this->Wizard->steps);
 	}
 
-	public function testStepGetOne() {
+	public function testStepOneGet() {
 		$session = $this->Wizard->Session->read('Wizard');
 		$this->assertEmpty($session);
 
-		$this->Wizard->action = 'step1';
 		$this->Wizard->startup($this->Controller);
 		$this->Wizard->process('step1');
 
@@ -271,7 +267,39 @@ class WizardComponentTest extends CakeTestCase {
 					'step4',
 					'confirmation',
 				),
-				'action' => 'step1',
+				'action' => 'wizard',
+				'expectedStep' => 'step1',
+				'activeStep' => 'step1',
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+	public function testStepOnePost() {
+		$this->Wizard->startup($this->Controller);
+		// Emulate GET request.
+		$this->Wizard->process('step1');
+		// Emulate POST request.
+		$this->Wizard->controller->request->data = array(
+			'User' => array(
+				'username' => 'admin',
+				'password' => 'pass',
+			),
+		);
+		$this->Wizard->process('step1');
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
 				'expectedStep' => 'step1',
 				'activeStep' => 'step1',
 			),

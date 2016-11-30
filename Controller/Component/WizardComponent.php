@@ -199,19 +199,6 @@ class WizardComponent extends Component {
 	protected $_wizardUrl = array();
 
 /**
- * WizardComponent Constructor
- *
- * @param ComponentCollection $collection A ComponentCollection this component can use to lazy-load its components
- * @param array               $settings   Array of configuration settings
- *
- * @access public
- */
-	/*public function __construct(ComponentCollection $collection, $settings = array()) {
-		parent::__construct($collection, $settings);
-		$this->_set($settings);
-	}*/
-
-/**
  * Initializes WizardComponent for use in the controller
  *
  * @param \Controller|object $controller A reference to the instantiating controller object
@@ -367,7 +354,7 @@ class WizardComponent extends Component {
 		} else {
 			if ($this->_validStep($step)) {
 				$this->_setCurrentStep($step);
-				if (!empty($this->controller->data) && !isset($this->controller->request->data['Previous'])) {
+				if (!empty($this->controller->request->data) && !isset($this->controller->request->data['Previous'])) {
 					$processCallback = '_' . Inflector::variable('process_' . $this->_currentStep);
 					if (method_exists($this->controller, $processCallback)) {
 						$proceed = $this->controller->$processCallback();
@@ -395,10 +382,10 @@ class WizardComponent extends Component {
 				} elseif (isset($this->controller->request->data['Previous']) && prev($this->steps)) {
 					return $this->redirect(current($this->steps));
 				} elseif ($this->controller->Session->check("$this->_sessionKey._draft.current")) {
-					$this->controller->data = $this->read('_draft.current.data');
+					$this->controller->request->data = $this->read('_draft.current.data');
 					$this->controller->Session->delete("$this->_sessionKey._draft.current");
 				} elseif ($this->controller->Session->check("$this->_sessionKey.$this->_currentStep")) {
-					$this->controller->data = $this->read($this->_currentStep);
+					$this->controller->request->data = $this->read($this->_currentStep);
 				}
 				$prepareCallback = '_' . Inflector::variable('prepare_' . $this->_currentStep);
 				if (method_exists($this->controller, $prepareCallback)) {
