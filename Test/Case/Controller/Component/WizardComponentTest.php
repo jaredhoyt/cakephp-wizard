@@ -294,7 +294,6 @@ class WizardComponentTest extends CakeTestCase {
 			),
 		);
 		$result = $this->Wizard->process('step1');
-		$this->assertContains('/xxx', $this->headers['Location']);
 		$assertEquals(array(), $result);
 
 		$expectedSession = array(
