@@ -500,7 +500,7 @@ class WizardComponentTest extends CakeTestCase {
 				'confirm' => '1',
 			),
 		);
-		$CakeResponse = $this->Wizard->process();
+		$CakeResponse = $this->Wizard->process(null);
 
 		$this->assertInstanceOf('CakeResponse', $CakeResponse);
 		$headers = $CakeResponse->header();
