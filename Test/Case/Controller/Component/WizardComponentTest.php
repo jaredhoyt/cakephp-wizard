@@ -36,7 +36,7 @@ class WizardTestController extends Controller {
 			'steps' => array(
 				'step1',
 				'step2',
-				'gender',
+				'gender', // This step is autovalidated.
 				array(
 					'male' => array('step3', 'step4'),
 					'female' => array('step4', 'step5'),
@@ -361,7 +361,7 @@ class WizardComponentTest extends CakeTestCase {
 
 		$this->Wizard->startup($this->Controller);
 		$postData = array(
-			'User' => array(
+			'WizardUserMock' => array(
 				'gender' => 'male',
 			),
 		);
