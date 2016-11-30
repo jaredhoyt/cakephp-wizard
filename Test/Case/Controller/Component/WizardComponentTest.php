@@ -337,6 +337,27 @@ class WizardComponentTest extends CakeTestCase {
 	}
 
 	public function testStepAutovalidate() {
+		$session = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'gender',
+				'activeStep' => 'gender',
+			),
+			'WizardTest' => array(
+				'step1' => array(),
+				'step2' => array(),
+			),
+		);
+		$this->Wizard->Session->write('Wizard', $session);
+
 		$this->Wizard->startup($this->Controller);
 		$postData = array(
 			'User' => array(
@@ -345,7 +366,7 @@ class WizardComponentTest extends CakeTestCase {
 		);
 		$this->Wizard->controller->request->data = $postData;
 		// Emulate GET request to set session variables.
-		$this->Wizard->process('step2');
+// 		$this->Wizard->process('step2');
 		// Emulate POST request.
 		$CakeResponse = $this->Wizard->process('gender');
 
