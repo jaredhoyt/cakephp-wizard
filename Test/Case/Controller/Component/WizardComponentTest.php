@@ -279,7 +279,7 @@ class WizardComponentTest extends CakeTestCase {
 	public function testStepOnePost() {
 		$this->Wizard->startup($this->Controller);
 		// Emulate GET request.
-		$this->Wizard->process('step1');
+		//$this->Wizard->process('step1');
 		// Emulate POST request.
 		$this->Wizard->controller->request->data = array(
 			'User' => array(
