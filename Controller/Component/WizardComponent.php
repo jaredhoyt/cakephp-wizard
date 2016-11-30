@@ -334,7 +334,7 @@ class WizardComponent extends Component {
 				$this->controller->_beforeCancel($this->_getExpectedStep());
 			}
 			$this->reset();
-			$this->controller->redirect($this->cancelUrl);
+			return $this->controller->redirect($this->cancelUrl);
 		}
 		if (isset($this->controller->request->data['Draft'])) {
 			if (method_exists($this->controller, '_saveDraft')) {
@@ -349,7 +349,7 @@ class WizardComponent extends Component {
 				$this->controller->_saveDraft(array_merge_recursive((array)$this->read(), $draft));
 			}
 			$this->reset();
-			$this->controller->redirect($this->draftUrl);
+			return $this->controller->redirect($this->draftUrl);
 		}
 		if (empty($step)) {
 			if ($this->controller->Session->check('Wizard.complete')) {
@@ -357,7 +357,7 @@ class WizardComponent extends Component {
 					$this->controller->_afterComplete();
 				}
 				$this->reset();
-				$this->controller->redirect($this->completeUrl);
+				return $this->controller->redirect($this->completeUrl);
 			}
 			$this->autoReset = false;
 		} elseif ($step == 'reset') {
@@ -379,13 +379,13 @@ class WizardComponent extends Component {
 					if ($proceed) {
 						$this->save();
 						if (isset($this->controller->request->data['SaveAndBack']) && prev($this->steps)) {
-							$this->redirect(current($this->steps));
+							return $this->redirect(current($this->steps));
 						}
 						if (next($this->steps)) {
 							if ($this->autoAdvance) {
-								$this->redirect();
+								return $this->redirect();
 							}
-							$this->redirect(current($this->steps));
+							return $this->redirect(current($this->steps));
 						} else {
 							$this->controller->Session->write('Wizard.complete', $this->read());
 							$this->reset();
@@ -393,7 +393,7 @@ class WizardComponent extends Component {
 						}
 					}
 				} elseif (isset($this->controller->request->data['Previous']) && prev($this->steps)) {
-					$this->redirect(current($this->steps));
+					return $this->redirect(current($this->steps));
 				} elseif ($this->controller->Session->check("$this->_sessionKey._draft.current")) {
 					$this->controller->data = $this->read('_draft.current.data');
 					$this->controller->Session->delete("$this->_sessionKey._draft.current");
@@ -414,13 +414,13 @@ class WizardComponent extends Component {
 					return true;
 				}
 			} else {
-				$this->redirect();
+				return $this->redirect();
 			}
 		}
 		if ($step != 'reset' && $this->autoReset) {
 			$this->reset();
 		}
-		$this->redirect();
+		return $this->redirect();
 	}
 
 /**
