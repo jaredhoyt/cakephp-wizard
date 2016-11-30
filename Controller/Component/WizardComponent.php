@@ -376,7 +376,7 @@ class WizardComponent extends Component {
 						} else {
 							$this->controller->Session->write('Wizard.complete', $this->read());
 							$this->reset();
-							$this->controller->redirect(array('action' => $this->action));
+							return $this->controller->redirect(array('action' => $this->action));
 						}
 					}
 				} elseif (isset($this->controller->request->data['Previous']) && prev($this->steps)) {
@@ -557,7 +557,7 @@ class WizardComponent extends Component {
 			'action' => $this->action,
 			$step
 		);
-		$this->controller->redirect($url, $status, $exit);
+		return $this->controller->redirect($url, $status, $exit);
 	}
 
 /**
@@ -596,9 +596,9 @@ class WizardComponent extends Component {
 	public function loadDraft($draft = array()) {
 		if (!empty($draft['_draft']['current']['step'])) {
 			$this->restore($draft);
-			$this->redirect($draft['_draft']['current']['step']);
+			return $this->redirect($draft['_draft']['current']['step']);
 		}
-		$this->redirect();
+		return $this->redirect();
 	}
 
 /**
