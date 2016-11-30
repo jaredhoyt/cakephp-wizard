@@ -344,8 +344,11 @@ class WizardComponentTest extends CakeTestCase {
 			),
 		);
 		$this->Wizard->controller->request->data = $postData;
-		$result = $this->Wizard->process('gender');
-		$this->assertTrue($result);
+		$CakeResponse = $this->Wizard->process('gender');
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard/step3', $headers['Location']);
 
 		$expectedSession = array(
 			'config' => array(
