@@ -23,11 +23,11 @@ An example showing how to retrieve all the current data with read() will be give
 
 One of my goals when writing this component was to prevent double submission of user data. One of the ways I accomplished this was by using the process callbacks for each step and redirecting to rather than rendering the next step.
 
-The second way was including an extra redirect and callback during the wizard completion process that creates a sort of "no man's land" for the wizard data. The way this works is, after the process callback for the last step is completed, the wizard data is moved to a new location in the session (Wizard.complete), the wizard redirects to a null step and another callback is called: _afterComplete(). 
+The second way was including an extra redirect and callback during the wizard completion process that creates a sort of "no man's land" for the wizard data. The way this works is, after the process callback for the last step is completed, the wizard data is moved to a new location in the session (Wizard.complete), the wizard redirects to a null step and another callback is called: afterComplete(). 
 
-_afterComplete() is an optional callback and is the ideal place to manipulate/store data after the wizard has been completed by the user. The callback does not need to return anything and the component automatically redirects to the $completeUrl (default '/') after the callback is finished.
+afterComplete() is an optional callback and is the ideal place to manipulate/store data after the wizard has been completed by the user. The callback does not need to return anything and the component automatically redirects to the $completeUrl (default '/') after the callback is finished.
 
-It's important to note that immediately after the afterComplete() callback and before the user is redirected to $completeUrl, the wizard is reset completely (all data is flushed from the session). If you need to redirect manually from _afterComplete(), be sure to call <code>Wizard->reset()</code> manually.
+It's important to note that immediately after the afterComplete() callback and before the user is redirected to $completeUrl, the wizard is reset completely (all data is flushed from the session). If you need to redirect manually from afterComplete(), be sure to call <code>Wizard->reset()</code> manually.
 
 So, to complete our tutorial example, we will pull all the data out of the wizard, store it in our database, and redirect the user to a confirmation page. 
 
@@ -52,7 +52,7 @@ class SignupController extends AppController {
 /**
  * [Wizard Process Callbacks]
  */
-	protected function _processAccount() {
+	public function processAccount() {
 		$this->Client->set($this->data);
 		$this->User->set($this->data);
 
@@ -62,7 +62,7 @@ class SignupController extends AppController {
 		return false;
 	}
 
-	protected function _processAddress() {
+	public function processAddress() {
 		$this->Client->set($this->data);
 
 		if($this->Client->validates()) {
@@ -71,7 +71,7 @@ class SignupController extends AppController {
 		return false;
 	}
 
-	protected function _processBilling() {
+	public function processBilling() {
 		$this->Billing->set($this->data);
 
 		if($this->Billing->validates()) {
@@ -80,13 +80,13 @@ class SignupController extends AppController {
 		return false;
 	}
 
-	protected function _processReview() {
+	public function processReview() {
 		return true;
 	}
 /**
  * [Wizard Completion Callback]
  */
-	protected function _afterComplete() {
+	protected function afterComplete() {
 		$wizardData = $this->Wizard->read();
 		extract($wizardData);
 
@@ -98,4 +98,4 @@ class SignupController extends AppController {
 }
 ?></code></pre>
 
-Please note the addition to beforeFilter() and the new confirm() method. You would also need to create a view file (confirm.ctp) with something like "Congrats, your sign-up was successful!" etc. It would also be good to create some sort of token during the _afterComplete() callback and have it checked for in the confirm() method, but that's outside the scope of this tutorial. 
+Please note the addition to beforeFilter() and the new confirm() method. You would also need to create a view file (confirm.ctp) with something like "Congrats, your sign-up was successful!" etc. It would also be good to create some sort of token during the afterComplete() callback and have it checked for in the confirm() method, but that's outside the scope of this tutorial. 
