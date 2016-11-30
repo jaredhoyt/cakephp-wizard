@@ -292,12 +292,13 @@ class WizardComponentTest extends CakeTestCase {
 		// Emulate GET request to set session variables.
 		$this->Wizard->process('step1');
 		// Emulate POST request.
-		$this->Wizard->controller->request->data = array(
+		$postData = array(
 			'User' => array(
 				'username' => 'admin',
 				'password' => 'pass',
 			),
 		);
+		$this->Wizard->controller->request->data = $postData;
 		$CakeResponse = $this->Wizard->process('step1');
 
 		$this->assertInstanceOf('CakeResponse', $CakeResponse);
@@ -315,9 +316,10 @@ class WizardComponentTest extends CakeTestCase {
 					'confirmation',
 				),
 				'action' => 'wizard',
-				'expectedStep' => 'step1',
+				'expectedStep' => 'step2',
 				'activeStep' => 'step1',
 			),
+			'WizardTest' => $postData,
 		);
 		$resultSession = $this->Wizard->Session->read('Wizard');
 		$this->assertEquals($expectedSession, $resultSession);
