@@ -78,6 +78,9 @@ class WizardTestController extends Controller {
 		return true;
 	}
 
+	public function redirect($url = null, $status = null, $exit = true) {
+		return parent::redirect($url, $status, false);
+	}
 }
 
 /**
