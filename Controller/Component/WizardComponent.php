@@ -355,34 +355,23 @@ class WizardComponent extends Component {
 			if ($this->_validStep($step)) {
 				$this->_setCurrentStep($step);
 				if (!empty($this->controller->request->data) && !isset($this->controller->request->data['Previous'])) {
-					echo "\n" . '1 ' . __METHOD__ . "\n";
 					$processCallback = '_' . Inflector::variable('process_' . $this->_currentStep);
-					echo '2 ' . __METHOD__ . "\n";
 					if (method_exists($this->controller, $processCallback)) {
-						echo '3 ' . __METHOD__ . "\n";
 						$proceed = $this->controller->$processCallback();
 					} elseif ($this->autoValidate) {
-						echo '4 ' . __METHOD__ . "\n";
 						$proceed = $this->_validateData();
 					} else {
-						echo '5 ' . __METHOD__ . "\n";
 						throw new NotImplementedException(sprintf(__('Process Callback not found. Please create Controller::%s', $processCallback)));
 					}
-					echo '6 ' . __METHOD__ . "\n";
 					if ($proceed) {
-						echo '7 ' . __METHOD__ . "\n";
 						$this->save();
 						if (isset($this->controller->request->data['SaveAndBack']) && prev($this->steps)) {
-							echo '8 ' . __METHOD__ . "\n";
 							return $this->redirect(current($this->steps));
 						}
 						if (next($this->steps)) {
-							echo '9 ' . __METHOD__ . "\n";
 							if ($this->autoAdvance) {
-								echo '10 ' . __METHOD__ . "\n";
 								return $this->redirect();
 							}
-							echo '11 ' . __METHOD__ . "\n";
 							return $this->redirect(current($this->steps));
 						} else {
 							$this->controller->Session->write('Wizard.complete', $this->read());
@@ -563,11 +552,15 @@ class WizardComponent extends Component {
 		if ($step == null) {
 			$step = $this->_getExpectedStep();
 		}
+		echo "\nstep: $step\n";
+		echo "status: $status\n";
+		echo "exit: $exit\n";
 		$url = array(
 			'controller' => $this->controller->request->controller,
 			'action' => $this->action,
 			$step
 		);
+		print_r($url);
 		return $this->controller->redirect($url, $status, $exit);
 	}
 
