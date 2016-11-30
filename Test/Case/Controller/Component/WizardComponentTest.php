@@ -1,5 +1,6 @@
 <?php
 App::uses('Controller', 'Controller');
+App::uses('Router', 'Routing');
 App::uses('WizardComponent', 'Wizard.Controller/Component');
 
 /**
@@ -79,6 +80,7 @@ class WizardTestController extends Controller {
 	}
 
 	public function redirect($url = null, $status = null, $exit = true) {
+		// Do not allow redirect() to exit in unit tests.
 		return parent::redirect($url, $status, false);
 	}
 }
@@ -294,7 +296,8 @@ class WizardComponentTest extends CakeTestCase {
 			),
 		);
 		$result = $this->Wizard->process('step1');
-		$this->assertEquals(array(), $result);
+
+		$this->assertInstanceOf('CakeResponse', $result);
 		$header = Router::currentRoute()->response->header();
 		$this->assertEquals(array(), $header);
 
