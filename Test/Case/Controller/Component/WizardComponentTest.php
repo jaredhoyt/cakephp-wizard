@@ -35,6 +35,10 @@ class WizardTestController extends Controller {
 		'Session',
 		'Wizard.Wizard' => array(
 			'autoValidate' => true,
+			'completeUrl' => array(
+				'action' => 'wizard',
+				'step1',
+			),
 			'steps' => array(
 				'step1',
 				'step2',
