@@ -520,14 +520,6 @@ class WizardComponentTest extends CakeTestCase {
 				'expectedStep' => 'confirmation',
 				'activeStep' => 'confirmation',
 			),
-			'complete' => array(
-				'step1' => array(),
-				'step2' => array(),
-				'gender' => array(),
-				'step3' => array(),
-				'step4' => array(),
-				'confirmation' => array(),
-			),
 		);
 		$resultSession = $this->Wizard->Session->read('Wizard');
 		$this->assertEquals($expectedSession, $resultSession);
