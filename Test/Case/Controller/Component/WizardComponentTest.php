@@ -57,46 +57,46 @@ class WizardTestController extends Controller {
 		$this->Wizard->process($step);
 	}
 
-	public function _processStep1() {
+	public function processStep1() {
 		if (!empty($this->request->data)) {
 			return true;
 		}
 		return false;
 	}
 
-	public function _processStep2() {
+	public function processStep2() {
 		if (!empty($this->request->data)) {
 			return true;
 		}
 		return false;
 	}
 
-	public function _processStep3() {
+	public function processStep3() {
 		if (!empty($this->request->data)) {
 			return true;
 		}
 		return false;
 	}
 
-	public function _processStep4() {
+	public function processStep4() {
 		if (!empty($this->request->data)) {
 			return true;
 		}
 		return false;
 	}
 
-	public function _processStep5() {
+	public function processStep5() {
 		if (!empty($this->request->data)) {
 			return true;
 		}
 		return false;
 	}
 
-	public function _processConfirmation() {
+	public function processConfirmation() {
 		return true;
 	}
 
-	public function _afterComplete() {
+	public function afterComplete() {
 	}
 
 	public function redirect($url = null, $status = null, $exit = true) {
@@ -104,7 +104,6 @@ class WizardTestController extends Controller {
 		return parent::redirect($url, $status, false);
 	}
 }
-
 /**
  * WizardComponentTest class
  *

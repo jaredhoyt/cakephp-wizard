@@ -317,14 +317,14 @@ class WizardComponent extends Component {
  */
 	public function process($step) {
 		if (isset($this->controller->request->data['Cancel'])) {
-			if (method_exists($this->controller, '_beforeCancel')) {
-				$this->controller->_beforeCancel($this->_getExpectedStep());
+			if (method_exists($this->controller, 'beforeCancel')) {
+				$this->controller->beforeCancel($this->_getExpectedStep());
 			}
 			$this->reset();
 			return $this->controller->redirect($this->cancelUrl);
 		}
 		if (isset($this->controller->request->data['Draft'])) {
-			if (method_exists($this->controller, '_saveDraft')) {
+			if (method_exists($this->controller, 'saveDraft')) {
 				$draft = array(
 					'_draft' => array(
 						'current' => array(
@@ -333,15 +333,15 @@ class WizardComponent extends Component {
 						)
 					)
 				);
-				$this->controller->_saveDraft(array_merge_recursive((array)$this->read(), $draft));
+				$this->controller->saveDraft(array_merge_recursive((array)$this->read(), $draft));
 			}
 			$this->reset();
 			return $this->controller->redirect($this->draftUrl);
 		}
 		if (empty($step)) {
 			if ($this->controller->Session->check('Wizard.complete')) {
-				if (method_exists($this->controller, '_afterComplete')) {
-					$this->controller->_afterComplete();
+				if (method_exists($this->controller, 'afterComplete')) {
+					$this->controller->afterComplete();
 				}
 				$this->reset();
 				return $this->controller->redirect($this->completeUrl);
@@ -355,7 +355,7 @@ class WizardComponent extends Component {
 			if ($this->_validStep($step)) {
 				$this->_setCurrentStep($step);
 				if (!empty($this->controller->request->data) && !isset($this->controller->request->data['Previous'])) {
-					$processCallback = '_' . Inflector::variable('process_' . $this->_currentStep);
+					$processCallback = Inflector::variable('process_' . $this->_currentStep);
 					if (method_exists($this->controller, $processCallback)) {
 						$proceed = $this->controller->$processCallback();
 					} elseif ($this->autoValidate) {
@@ -387,7 +387,7 @@ class WizardComponent extends Component {
 				} elseif ($this->controller->Session->check("$this->_sessionKey.$this->_currentStep")) {
 					$this->controller->request->data = $this->read($this->_currentStep);
 				}
-				$prepareCallback = '_' . Inflector::variable('prepare_' . $this->_currentStep);
+				$prepareCallback = Inflector::variable('prepare_' . $this->_currentStep);
 				if (method_exists($this->controller, $prepareCallback)) {
 					$this->controller->$prepareCallback();
 				}
@@ -523,7 +523,7 @@ class WizardComponent extends Component {
  * Saves the data from the current step into the Session.
  *
  * Please note: This is normally called automatically by the component after
- * a successful _processCallback, but can be called directly for advanced navigation purposes.
+ * a successful processCallback, but can be called directly for advanced navigation purposes.
  *
  * @param string $step step key.
  * @param array $data  step details.
@@ -589,7 +589,7 @@ class WizardComponent extends Component {
 /**
  * Loads previous draft session.
  *
- * @param array $draft Session data of same format passed to Controller::_saveDraft()
+ * @param array $draft Session data of same format passed to Controller::saveDraft()
  *
  * @see    WizardComponent::process()
  * @access public
