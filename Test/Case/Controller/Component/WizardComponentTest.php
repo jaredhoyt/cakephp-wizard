@@ -295,11 +295,11 @@ class WizardComponentTest extends CakeTestCase {
 				'password' => 'pass',
 			),
 		);
-		$result = $this->Wizard->process('step1');
+		$CakeResponse = $this->Wizard->process('step1');
 
-		$this->assertInstanceOf('CakeResponse', $result);
-		$header = Router::currentRoute()->response->header();
-		$this->assertEquals(array(), $header);
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$header = $CakeResponse->header();
+		$this->assertContains('/xxx', $header['Location']);
 
 		$expectedSession = array(
 			'config' => array(
