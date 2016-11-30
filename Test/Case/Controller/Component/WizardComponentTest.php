@@ -103,7 +103,6 @@ class WizardComponentTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$CakeRequest = new CakeRequest(null, false);
-// 		$CakeResponse = new CakeResponse();
 		$CakeResponse = $this->getMock('CakeResponse', array('send'));
 		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
 		$ComponentCollection = new ComponentCollection();
@@ -303,7 +302,6 @@ class WizardComponentTest extends CakeTestCase {
 
 		$this->assertInstanceOf('CakeResponse', $CakeResponse);
 		$header = $CakeResponse->header();
-		$this->assertEquals(array('xxx'), $header);
 		$this->assertContains('/wizard/step2', $header['Location']);
 
 		$expectedSession = array(
