@@ -1,6 +1,24 @@
 <?php
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
 App::uses('Controller', 'Controller');
+App::uses('Model', 'Model');
+App::uses('Router', 'Routing');
 App::uses('WizardComponent', 'Wizard.Controller/Component');
+
+class WizardUserMock extends Model {
+
+	public $useTable = false;
+
+	public $validate = array(
+		'gender' => array(
+			'inList' => array(
+				'rule' => array('inList', array('male', 'female')),
+			),
+		),
+	);
+
+}
 
 /**
  * AuthTestController class
@@ -9,13 +27,22 @@ App::uses('WizardComponent', 'Wizard.Controller/Component');
  */
 class WizardTestController extends Controller {
 
+	public $autoRender = false;
+
+	public $uses = array('WizardUserMock');
+
 	public $components = array(
 		'Session',
 		'Wizard.Wizard' => array(
+			'autoValidate' => true,
+			'completeUrl' => array(
+				'action' => 'wizard',
+				'step1',
+			),
 			'steps' => array(
 				'step1',
 				'step2',
-				'gender',
+				'gender', // This step is autovalidated.
 				array(
 					'male' => array('step3', 'step4'),
 					'female' => array('step4', 'step5'),
@@ -30,36 +57,53 @@ class WizardTestController extends Controller {
 		$this->Wizard->process($step);
 	}
 
-	/*public function _processStep1() {
+	public function processStep1() {
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function processStep2() {
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function processStep3() {
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function processStep4() {
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function processStep5() {
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function processConfirmation() {
 		return true;
 	}
 
-	public function _processStep2() {
-		return true;
+	public function afterComplete() {
 	}
 
-	public function _processStep3() {
-		return true;
+	public function redirect($url = null, $status = null, $exit = true) {
+		// Do not allow redirect() to exit in unit tests.
+		return parent::redirect($url, $status, false);
 	}
-
-	public function _processStep4() {
-		return true;
-	}
-
-	public function _processStep5() {
-		return true;
-	}
-
-	public function _processGender() {
-		return true;
-	}
-
-	public function _processConfirmation() {
-		return true;
-	}*/
-
 }
-
 /**
  * WizardComponentTest class
  *
@@ -76,7 +120,8 @@ class WizardComponentTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$CakeRequest = new CakeRequest(null, false);
-		$this->Controller = new WizardTestController($CakeRequest, $this->getMock('CakeResponse'));
+		$CakeResponse = $this->getMock('CakeResponse', array('send'));
+		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
 		$ComponentCollection = new ComponentCollection();
 		$ComponentCollection->init($this->Controller);
 		$this->Controller->Components->init($this->Controller);
@@ -168,10 +213,9 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($configSteps);
 		$this->assertEmpty($this->Wizard->controller->helpers);
 
-		$this->Wizard->action = 'gender';
 		$this->Wizard->startup($this->Controller);
 
-		$expectedAction = 'gender';
+		$expectedAction = 'wizard';
 		$resultAction = $this->Wizard->Session->read('Wizard.config.action');
 		$this->assertEquals($expectedAction, $resultAction);
 		$expectedSteps = array(
@@ -197,7 +241,6 @@ class WizardComponentTest extends CakeTestCase {
 
 		$this->Wizard->branch('male', true);
 		$this->Wizard->branch('female', true);
-		$this->Wizard->action = 'gender';
 		$this->Wizard->startup($this->Controller);
 
 		$expectedSteps = array(
@@ -217,7 +260,6 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($configSteps);
 
 		$this->Wizard->branch('female');
-		$this->Wizard->action = 'gender';
 		$this->Wizard->startup($this->Controller);
 
 		$expectedSteps = array(
@@ -231,5 +273,254 @@ class WizardComponentTest extends CakeTestCase {
 		$resultSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEquals($expectedSteps, $resultSteps);
 		$this->assertEquals($expectedSteps, $this->Wizard->steps);
+	}
+
+	public function testProcessStepOneGet() {
+		$session = $this->Wizard->Session->read('Wizard');
+		$this->assertEmpty($session);
+
+		$this->Wizard->startup($this->Controller);
+		$result = $this->Wizard->process('step1');
+		$this->assertTrue($result);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step1',
+				'activeStep' => 'step1',
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+	public function testProcessStepOnePost() {
+		$session = $this->Wizard->Session->read('Wizard');
+		$this->assertEmpty($session);
+		$this->Wizard->startup($this->Controller);
+		// Emulate GET request to set session variables.
+		$this->Wizard->process('step1');
+		// Emulate POST request.
+		$postData = array(
+			'User' => array(
+				'username' => 'admin',
+				'password' => 'pass',
+			),
+		);
+		$this->Wizard->controller->request->data = $postData;
+		$CakeResponse = $this->Wizard->process('step1');
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard/step2', $headers['Location']);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step2',
+				'activeStep' => 'step1',
+			),
+			'WizardTest' => array(
+				'step1' => $postData,
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+	public function testProcessAutovalidatePost() {
+		// Set session prerequisites.
+		$session = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'gender',
+				'activeStep' => 'gender',
+			),
+			'WizardTest' => array(
+				'step1' => array(),
+				'step2' => array(),
+			),
+		);
+		$this->Wizard->Session->write('Wizard', $session);
+
+		$this->Wizard->startup($this->Controller);
+		$postData = array(
+			'WizardUserMock' => array(
+				'gender' => 'male',
+			),
+		);
+		$this->Wizard->controller->request->data = $postData;
+		$CakeResponse = $this->Wizard->process('gender');
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard/step3', $headers['Location']);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step3',
+				'activeStep' => 'gender',
+			),
+			'WizardTest' => array(
+				'step1' => array(),
+				'step2' => array(),
+				'gender' => $postData,
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+	public function testProcessLastStepPost() {
+		// Set session prerequisites.
+		$session = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'confirmation',
+				'activeStep' => 'confirmation',
+			),
+			'WizardTest' => array(
+				'step1' => array(),
+				'step2' => array(),
+				'gender' => array(),
+				'step3' => array(),
+				'step4' => array(),
+			),
+		);
+		$this->Wizard->Session->write('Wizard', $session);
+
+		$this->Wizard->startup($this->Controller);
+		$postData = array(
+			'WizardUserMock' => array(
+				'confirm' => '1',
+			),
+		);
+		$this->Wizard->controller->request->data = $postData;
+		$CakeResponse = $this->Wizard->process('confirmation');
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard', $headers['Location']);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'confirmation',
+				'activeStep' => 'confirmation',
+			),
+			'complete' => array(
+				'step1' => array(),
+				'step2' => array(),
+				'gender' => array(),
+				'step3' => array(),
+				'step4' => array(),
+				'confirmation' => $postData,
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+	public function testProcessAfterComplete() {
+		// Set session prerequisites.
+		$session = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'confirmation',
+				'activeStep' => 'confirmation',
+			),
+			'complete' => array(
+				'step1' => array(),
+				'step2' => array(),
+				'gender' => array(),
+				'step3' => array(),
+				'step4' => array(),
+				'confirmation' => array(),
+			),
+		);
+		$this->Wizard->Session->write('Wizard', $session);
+
+		$this->Wizard->initialize($this->Controller);
+		$this->Wizard->startup($this->Controller);
+		$CakeResponse = $this->Wizard->process(null);
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard/step1', $headers['Location']);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'confirmation',
+				'activeStep' => 'confirmation',
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
 	}
 }
