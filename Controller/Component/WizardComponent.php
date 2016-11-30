@@ -355,23 +355,35 @@ class WizardComponent extends Component {
 			if ($this->_validStep($step)) {
 				$this->_setCurrentStep($step);
 				if (!empty($this->controller->request->data) && !isset($this->controller->request->data['Previous'])) {
+					$i = 0;
+					echo ++$i . ' ' . __METHOD__ . "\n";
 					$processCallback = '_' . Inflector::variable('process_' . $this->_currentStep);
+					echo ++$i . ' ' . __METHOD__ . "\n";
 					if (method_exists($this->controller, $processCallback)) {
+						echo ++$i . ' ' . __METHOD__ . "\n";
 						$proceed = $this->controller->$processCallback();
 					} elseif ($this->autoValidate) {
+						echo ++$i . ' ' . __METHOD__ . "\n";
 						$proceed = $this->_validateData();
 					} else {
+						echo ++$i . ' ' . __METHOD__ . "\n";
 						throw new NotImplementedException(sprintf(__('Process Callback not found. Please create Controller::%s', $processCallback)));
 					}
+					echo ++$i . ' ' . __METHOD__ . "\n";
 					if ($proceed) {
+						echo ++$i . ' ' . __METHOD__ . "\n";
 						$this->save();
 						if (isset($this->controller->request->data['SaveAndBack']) && prev($this->steps)) {
+							echo ++$i . ' ' . __METHOD__ . "\n";
 							return $this->redirect(current($this->steps));
 						}
 						if (next($this->steps)) {
+							echo ++$i . ' ' . __METHOD__ . "\n";
 							if ($this->autoAdvance) {
+								echo ++$i . ' ' . __METHOD__ . "\n";
 								return $this->redirect();
 							}
+							echo ++$i . ' ' . __METHOD__ . "\n";
 							return $this->redirect(current($this->steps));
 						} else {
 							$this->controller->Session->write('Wizard.complete', $this->read());
