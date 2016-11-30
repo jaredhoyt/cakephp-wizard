@@ -408,7 +408,11 @@ class WizardComponent extends Component {
 				if ($this->nestedViews) {
 					$this->controller->viewPath .= '/' . $this->action;
 				}
-				return $this->controller->autoRender ? $this->controller->render($this->_currentStep) : true;
+				if ($this->controller->autoRender) {
+					return $this->controller->render($this->_currentStep);
+				} else {
+					return true;
+				}
 			} else {
 				$this->redirect();
 			}

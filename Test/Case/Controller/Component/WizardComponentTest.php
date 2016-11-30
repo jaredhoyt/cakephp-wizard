@@ -9,6 +9,8 @@ App::uses('WizardComponent', 'Wizard.Controller/Component');
  */
 class WizardTestController extends Controller {
 
+	public $autoRender = false;
+
 	public $components = array(
 		'Session',
 		'Wizard.Wizard' => array(
