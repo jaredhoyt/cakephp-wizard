@@ -8,6 +8,8 @@ App::uses('WizardComponent', 'Wizard.Controller/Component');
 
 class WizardUserMock extends Model {
 
+	public $useTable = false;
+
 	public $validate = array(
 		'gender' => array(
 			'inList' => array(
