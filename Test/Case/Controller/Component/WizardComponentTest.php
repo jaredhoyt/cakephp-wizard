@@ -5,6 +5,18 @@ App::uses('Controller', 'Controller');
 App::uses('Router', 'Routing');
 App::uses('WizardComponent', 'Wizard.Controller/Component');
 
+class WizardUserMock extends Model {
+
+	public $validate = array(
+		'gender' => array(
+			'inList' => array(
+				'rule' => array('inList', array('male', 'female')),
+			),
+		),
+	);
+
+}
+
 /**
  * AuthTestController class
  *
@@ -14,9 +26,12 @@ class WizardTestController extends Controller {
 
 	public $autoRender = false;
 
+	public $uses = array('WizardUserMock');
+
 	public $components = array(
 		'Session',
 		'Wizard.Wizard' => array(
+			'autoValidate' => true,
 			'steps' => array(
 				'step1',
 				'step2',
@@ -64,13 +79,6 @@ class WizardTestController extends Controller {
 	}
 
 	public function _processStep5() {
-		if (!empty($this->request->data)) {
-			return true;
-		}
-		return false;
-	}
-
-	public function _processGender() {
 		if (!empty($this->request->data)) {
 			return true;
 		}
@@ -321,6 +329,36 @@ class WizardComponentTest extends CakeTestCase {
 			),
 			'WizardTest' => array(
 				'step1' => $postData,
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+	public function testStepAutovalidate() {
+		$this->Wizard->startup($this->Controller);
+		$postData = array(
+			'User' => array(
+				'gender' => 'male',
+			),
+		);
+		$this->Wizard->controller->request->data = $postData;
+		$result = $this->Wizard->process('gender');
+		$this->assertTrue($result);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step3',
+				'activeStep' => 'gender',
 			),
 		);
 		$resultSession = $this->Wizard->Session->read('Wizard');
