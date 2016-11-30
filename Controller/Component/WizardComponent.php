@@ -397,9 +397,8 @@ class WizardComponent extends Component {
 				}
 				if ($this->controller->autoRender) {
 					return $this->controller->render($this->_currentStep);
-				} else {
-					return true;
 				}
+				return true;
 			} else {
 				return $this->redirect();
 			}
