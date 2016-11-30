@@ -435,7 +435,7 @@ class WizardComponentTest extends CakeTestCase {
 
 		$this->assertInstanceOf('CakeResponse', $CakeResponse);
 		$headers = $CakeResponse->header();
-		$this->assertContains('/wizard/step1', $headers['Location']);
+		$this->assertContains('/wizard', $headers['Location']);
 
 		$expectedSession = array(
 			'config' => array(
