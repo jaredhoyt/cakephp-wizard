@@ -2,6 +2,7 @@
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
 App::uses('Controller', 'Controller');
+App::uses('Model', 'Model');
 App::uses('Router', 'Routing');
 App::uses('WizardComponent', 'Wizard.Controller/Component');
 
