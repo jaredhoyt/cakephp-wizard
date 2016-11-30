@@ -79,7 +79,7 @@ before_script:
 
 script:
 # Temporary disable code style until we have enough unit tests to fix code style errors.
-#  - ~/.composer/vendor/bin/phpcs --standard=CakePHP ./plugins/Wizard --ignore=*/vendor/* -p
+  - ~/.composer/vendor/bin/phpcs --standard=CakePHP ./plugins/Wizard --ignore=*/vendor/* -p
   - ./lib/Cake/Console/cake test Wizard AllWizard --configuration=./plugins/Wizard/phpunit-clover.xml --stderr
 
 after_success:
