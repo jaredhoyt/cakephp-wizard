@@ -30,33 +30,51 @@ class WizardTestController extends Controller {
 		$this->Wizard->process($step);
 	}
 
-	/*public function _processStep1() {
-		return true;
+	public function _processStep1() {
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
 	}
 
 	public function _processStep2() {
-		return true;
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
 	}
 
 	public function _processStep3() {
-		return true;
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
 	}
 
 	public function _processStep4() {
-		return true;
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
 	}
 
 	public function _processStep5() {
-		return true;
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
 	}
 
 	public function _processGender() {
-		return true;
+		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
 	}
 
 	public function _processConfirmation() {
 		return true;
-	}*/
+	}
 
 }
 
@@ -231,5 +249,15 @@ class WizardComponentTest extends CakeTestCase {
 		$resultSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEquals($expectedSteps, $resultSteps);
 		$this->assertEquals($expectedSteps, $this->Wizard->steps);
+	}
+
+	public function testStepGetOne() {
+		$this->Wizard->action = 'step1';
+		$this->Wizard->startup($this->Controller);
+		$this->Wizard->process('step1');
+
+		$expectedSession = array();
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
 	}
 }
