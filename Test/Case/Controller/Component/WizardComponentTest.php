@@ -448,10 +448,10 @@ class WizardComponentTest extends CakeTestCase {
 					'confirmation',
 				),
 				'action' => 'wizard',
-				'expectedStep' => 'step3',
-				'activeStep' => 'gender',
+				'expectedStep' => 'confirmation',
+				'activeStep' => 'confirmation',
 			),
-			'WizardTest' => array(
+			'complete' => array(
 				'step1' => array(),
 				'step2' => array(),
 				'gender' => array(),
