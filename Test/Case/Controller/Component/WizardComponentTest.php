@@ -483,7 +483,7 @@ class WizardComponentTest extends CakeTestCase {
 				'expectedStep' => 'confirmation',
 				'activeStep' => 'confirmation',
 			),
-			'WizardTest' => array(
+			'complete' => array(
 				'step1' => array(),
 				'step2' => array(),
 				'gender' => array(),
@@ -494,12 +494,8 @@ class WizardComponentTest extends CakeTestCase {
 		);
 		$this->Wizard->Session->write('Wizard', $session);
 
+		$this->Wizard->initialize($this->Controller);
 		$this->Wizard->startup($this->Controller);
-		$postData = array(
-			'WizardUserMock' => array(
-				'confirm' => '1',
-			),
-		);
 		$CakeResponse = $this->Wizard->process(null);
 
 		$this->assertInstanceOf('CakeResponse', $CakeResponse);
