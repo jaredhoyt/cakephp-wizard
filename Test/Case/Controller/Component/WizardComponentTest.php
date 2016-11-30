@@ -254,23 +254,8 @@ class WizardComponentTest extends CakeTestCase {
 	}
 
 	public function testStepGetOne() {
-		$expectedSession = array(
-			'config' => array(
-				'steps' => array(
-					'step1',
-					'step2',
-					'gender',
-					'step4',
-					'step5',
-					'confirmation',
-				),
-				'action' => 'step1',
-				'expectedStep' => 'step1',
-				'activeStep' => 'step1',
-			),
-		);
-		$resultSession = $this->Wizard->Session->read('Wizard');
-		$this->assertEquals($expectedSession, $resultSession);
+		$session = $this->Wizard->Session->read('Wizard');
+		$this->assertEmpty($session);
 
 		$this->Wizard->action = 'step1';
 		$this->Wizard->startup($this->Controller);
