@@ -255,7 +255,8 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($session);
 
 		$this->Wizard->startup($this->Controller);
-		$this->Wizard->process('step1');
+		$result = $this->Wizard->process('step1');
+		$this->assertTrue($result);
 
 		$expectedSession = array(
 			'config' => array(
@@ -277,34 +278,36 @@ class WizardComponentTest extends CakeTestCase {
 	}
 
 	public function testStepOnePost() {
-// 		$this->Wizard->startup($this->Controller);
-// 		// Emulate GET request.
-// 		$this->Wizard->process('step1');
-// 		// Emulate POST request.
-// 		$this->Wizard->controller->request->data = array(
-// 			'User' => array(
-// 				'username' => 'admin',
-// 				'password' => 'pass',
-// 			),
-// 		);
-// 		$this->Wizard->process('step1');
+		$session = $this->Wizard->Session->read('Wizard');
+		$this->assertEmpty($session);
+		$this->Wizard->startup($this->Controller);
+		// Emulate GET request.
+		$this->Wizard->process('step1');
+		// Emulate POST request.
+		$this->Wizard->controller->request->data = array(
+			'User' => array(
+				'username' => 'admin',
+				'password' => 'pass',
+			),
+		);
+		$this->Wizard->process('step1');
 
-// 		$expectedSession = array(
-// 			'config' => array(
-// 				'steps' => array(
-// 					'step1',
-// 					'step2',
-// 					'gender',
-// 					'step3',
-// 					'step4',
-// 					'confirmation',
-// 				),
-// 				'action' => 'wizard',
-// 				'expectedStep' => 'step1',
-// 				'activeStep' => 'step1',
-// 			),
-// 		);
-// 		$resultSession = $this->Wizard->Session->read('Wizard');
-// 		$this->assertEquals($expectedSession, $resultSession);
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step1',
+				'activeStep' => 'step1',
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
 	}
 }
