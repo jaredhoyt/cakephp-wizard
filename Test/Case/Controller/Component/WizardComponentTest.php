@@ -294,7 +294,9 @@ class WizardComponentTest extends CakeTestCase {
 			),
 		);
 		$result = $this->Wizard->process('step1');
-		$assertEquals(array(), $result);
+		$this->assertEquals(array(), $result);
+		$header = Router::currentRoute()->response->header();
+		$this->assertEquals(array(), $header);
 
 		$expectedSession = array(
 			'config' => array(
