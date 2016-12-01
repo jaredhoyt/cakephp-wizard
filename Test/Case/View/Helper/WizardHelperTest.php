@@ -1,4 +1,5 @@
 <?php
+App::uses('WizardHelper', 'Wizard.View/Helper');
 /**
  * WizardHelperTest Test Case
  *
