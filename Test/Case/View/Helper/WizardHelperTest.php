@@ -94,4 +94,19 @@ class WizardHelperTest extends CakeTestCase {
 		$result = $this->Wizard->link('Gender', 'gender');
 		$this->assertEquals($expected, $result);
 	}
+
+	public function testStepNumberCurrent() {
+		$result = $this->Wizard->stepNumber();
+		$this->assertEquals(3, $result);
+	}
+
+	public function testStepNumberConfirmation() {
+		$result = $this->Wizard->stepNumber('confirmation');
+		$this->assertEquals(6, $result);
+	}
+
+	public function testStepNumberNone() {
+		$result = $this->Wizard->stepNumber('step5');
+		$this->assertFalse($result);
+	}
 }
