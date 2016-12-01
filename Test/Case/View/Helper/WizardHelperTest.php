@@ -109,4 +109,9 @@ class WizardHelperTest extends CakeTestCase {
 		$result = $this->Wizard->stepNumber('step5');
 		$this->assertFalse($result);
 	}
+
+	public function testStepTotal() {
+		$result = $this->Wizard->stepTotal();
+		$this->assertEquals(6, $result);
+	}
 }
