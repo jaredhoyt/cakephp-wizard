@@ -55,8 +55,11 @@ class WizardHelper extends AppHelper {
 		if ($step == null) {
 			$step = $title;
 		}
-		$wizardAction = $this->config('wizardAction');
-		return $this->Html->link($title, $wizardAction . $step, $htmlAttributes, $confirmMessage);
+		$url = array(
+			'action' => $this->config('action'),
+			$step,
+		);
+		return $this->Html->link($title, $url, $htmlAttributes, $confirmMessage);
 	}
 
 /**
@@ -102,12 +105,16 @@ class WizardHelper extends AppHelper {
 	public function progressMenu($titles = array(), $attributes = array(), $htmlAttributes = array(), $confirmMessage = false) {
 		$wizardConfig = $this->config();
 		extract($wizardConfig);
-		$wizardAction = $this->config('wizardAction');
+		$wizardAction = $this->config('action');
 		$attributes = array_merge(array('wrap' => 'div'), $attributes);
 		extract($attributes);
 		$incomplete = null;
 		foreach ($steps as $title => $step) {
-			$title = empty($titles[$step]) ? $step : $titles[$step];
+			if (empty($titles[$step])) {
+				$title = $step;
+			} else {
+				$title = $titles[$step];
+			}
 			if (!$incomplete) {
 				if ($step == $expectedStep) {
 					$incomplete = true;
@@ -118,12 +125,12 @@ class WizardHelper extends AppHelper {
 				if ($step == $activeStep) {
 					$class .= ' active';
 				}
-				$this->output .= "<$wrap class='$class'>" . $this->Html->link($title, array(
+				$this->output .= "<$wrap class=\"$class\">" . $this->Html->link($title, array(
 						'action' => $wizardAction,
 						$step
 					), $htmlAttributes, $confirmMessage) . "</$wrap>";
 			} else {
-				$this->output .= "<$wrap class='incomplete'>" . $title . "</$wrap>";
+				$this->output .= "<$wrap class=\"incomplete\">" . $title . "</$wrap>";
 			}
 		}
 		return $this->output;
