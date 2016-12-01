@@ -1,4 +1,5 @@
 <?php
+App::uses('CakeSession', 'Model/Datasource');
 App::uses('WizardHelper', 'Wizard.View/Helper');
 /**
  * WizardHelperTest Test Case
@@ -25,7 +26,7 @@ class WizardHelperTest extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->Wizard);
-		$this->Wizard->Session->delete('Wizard');
+		CakeSession::delete('Wizard');
 		parent::tearDown();
 	}
 
@@ -50,7 +51,7 @@ class WizardHelperTest extends CakeTestCase {
 				'activeStep' => 'confirmation',
 			),
 		);
-		$this->Wizard->Session->write('Wizard', $session);
+		CakeSession::write('Wizard', $session);
 
 		$result = $this->Wizard->config();
 		$this->assertEquals($session['config'], $result);
@@ -72,7 +73,7 @@ class WizardHelperTest extends CakeTestCase {
 				'activeStep' => 'confirmation',
 			),
 		);
-		$this->Wizard->Session->write('Wizard', $session);
+		CakeSession::write('Wizard', $session);
 
 		$result = $this->Wizard->config('steps');
 		$this->assertEquals($session['config']['steps'], $result);
