@@ -110,7 +110,11 @@ class WizardHelper extends AppHelper {
 		extract($attributes);
 		$incomplete = null;
 		foreach ($steps as $title => $step) {
-			$title = empty($titles[$step]) ? $step : $titles[$step];
+			if (empty($titles[$step])) {
+				$title = $step;
+			} else {
+				$title = $titles[$step];
+			}
 			if (!$incomplete) {
 				if ($step == $expectedStep) {
 					$incomplete = true;

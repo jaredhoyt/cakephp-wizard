@@ -114,4 +114,10 @@ class WizardHelperTest extends CakeTestCase {
 		$result = $this->Wizard->stepTotal();
 		$this->assertEquals(6, $result);
 	}
+
+	public function testProgressMenu() {
+		$expected = '';
+		$result = $this->Wizard->progressMenu();
+		$this->assertEquals($expected, $result);
+	}
 }
