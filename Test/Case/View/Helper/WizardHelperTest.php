@@ -6,22 +6,22 @@
  */
 class WizardHelperTest extends CakeTestCase {
 
-	/**
-	 * setUp method
-	 *
-	 * @return void
-	 */
+/**
+ * setUp method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$View = new View();
 		$this->Wizard = new WizardHelper($View);
 	}
 
-	/**
-	 * tearDown method
-	 *
-	 * @return void
-	 */
+/**
+ * tearDown method
+ *
+ * @return void
+ */
 	public function tearDown() {
 		unset($this->Wizard);
 		$this->Wizard->Session->delete('Wizard');
