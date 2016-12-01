@@ -17,6 +17,22 @@ class WizardHelperTest extends CakeTestCase {
 		parent::setUp();
 		$View = new View();
 		$this->Wizard = new WizardHelper($View);
+		$session = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'gender',
+				'activeStep' => 'gender',
+			),
+		);
+		CakeSession::write('Wizard', $session);
 	}
 
 /**
@@ -36,46 +52,39 @@ class WizardHelperTest extends CakeTestCase {
 	}
 
 	public function testConfigReadAll() {
-		$session = array(
-			'config' => array(
-				'steps' => array(
-					'step1',
-					'step2',
-					'gender',
-					'step3',
-					'step4',
-					'confirmation',
-				),
-				'action' => 'wizard',
-				'expectedStep' => 'confirmation',
-				'activeStep' => 'confirmation',
+		$expected = array(
+			'steps' => array(
+				'step1',
+				'step2',
+				'gender',
+				'step3',
+				'step4',
+				'confirmation',
 			),
+			'action' => 'wizard',
+			'expectedStep' => 'gender',
+			'activeStep' => 'gender',
 		);
-		CakeSession::write('Wizard', $session);
-
 		$result = $this->Wizard->config();
-		$this->assertEquals($session['config'], $result);
+		$this->assertEquals($expected, $result);
 	}
 
 	public function testConfigReadOne() {
-		$session = array(
-			'config' => array(
-				'steps' => array(
-					'step1',
-					'step2',
-					'gender',
-					'step3',
-					'step4',
-					'confirmation',
-				),
-				'action' => 'wizard',
-				'expectedStep' => 'confirmation',
-				'activeStep' => 'confirmation',
-			),
+		$expected = array(
+			'step1',
+			'step2',
+			'gender',
+			'step3',
+			'step4',
+			'confirmation',
 		);
-		CakeSession::write('Wizard', $session);
-
 		$result = $this->Wizard->config('steps');
-		$this->assertEquals($session['config']['steps'], $result);
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testLink() {
+		$expected = '';
+		$result = $this->Wizard->link('gender');
+		$this->assertEquals($expected, $result);
 	}
 }
