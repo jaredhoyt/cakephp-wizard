@@ -47,6 +47,7 @@ class WizardHelperTest extends CakeTestCase {
 	}
 
 	public function testConfigEmpty() {
+		CakeSession::delete('Wizard');
 		$result = $this->Wizard->config('steps');
 		$this->assertNull($result);
 	}
@@ -83,8 +84,14 @@ class WizardHelperTest extends CakeTestCase {
 	}
 
 	public function testLink() {
-		$expected = '';
+		$expected = '<a href="/wizard/gender">gender</a>';
 		$result = $this->Wizard->link('gender');
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testLinkStep() {
+		$expected = '<a href="/wizard/gender">Gender</a>';
+		$result = $this->Wizard->link('Gender', 'gender');
 		$this->assertEquals($expected, $result);
 	}
 }

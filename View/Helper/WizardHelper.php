@@ -55,7 +55,7 @@ class WizardHelper extends AppHelper {
 		if ($step == null) {
 			$step = $title;
 		}
-		$wizardAction = $this->config('wizardAction');
+		$wizardAction = $this->config('action');
 		return $this->Html->link($title, $wizardAction . $step, $htmlAttributes, $confirmMessage);
 	}
 
