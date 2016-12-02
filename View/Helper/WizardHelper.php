@@ -111,7 +111,7 @@ class WizardHelper extends AppHelper {
 		$incomplete = null;
 		foreach ($steps as $title => $step) {
 			if (empty($titles[$step])) {
-				$title = $step;
+				$title = Inflector::humanize($step);
 			} else {
 				$title = $titles[$step];
 			}

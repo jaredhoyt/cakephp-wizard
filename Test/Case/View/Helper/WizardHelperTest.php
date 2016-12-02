@@ -116,23 +116,23 @@ class WizardHelperTest extends CakeTestCase {
 	}
 
 	public function testProgressMenu() {
-		$expected = '<div class="complete"><a href="/wizard/step1">step1</a></div>';
-		$expected .= '<div class="complete"><a href="/wizard/step2">step2</a></div>';
-		$expected .= '<div class="expected active"><a href="/wizard/gender">gender</a></div>';
-		$expected .= '<div class="incomplete">step3</div>';
-		$expected .= '<div class="incomplete">step4</div>';
-		$expected .= '<div class="incomplete">confirmation</div>';
+		$expected = '<div class="complete"><a href="/wizard/step1">Step1</a></div>';
+		$expected .= '<div class="complete"><a href="/wizard/step2">Step2</a></div>';
+		$expected .= '<div class="expected active"><a href="/wizard/gender">Gender</a></div>';
+		$expected .= '<div class="incomplete"><a href="#">Step3</a></div>';
+		$expected .= '<div class="incomplete"><a href="#">Step4</a></div>';
+		$expected .= '<div class="incomplete"><a href="#">Confirmation</a></div>';
 		$result = $this->Wizard->progressMenu();
 		$this->assertEquals($expected, $result);
 	}
 
 	public function testProgressMenuCustomWrapper() {
-		$expected = '<li class="complete"><a href="/wizard/step1">step1</a></li>';
-		$expected .= '<li class="complete"><a href="/wizard/step2">step2</a></li>';
-		$expected .= '<li class="expected active"><a href="/wizard/gender">gender</a></li>';
-		$expected .= '<li class="incomplete"><a href="#">step3</a></li>';
-		$expected .= '<li class="incomplete"><a href="#">step4</a></li>';
-		$expected .= '<li class="incomplete"><a href="#">confirmation</a></li>';
+		$expected = '<li class="complete"><a href="/wizard/step1">Step1</a></li>';
+		$expected .= '<li class="complete"><a href="/wizard/step2">Step2</a></li>';
+		$expected .= '<li class="expected active"><a href="/wizard/gender">Gender</a></li>';
+		$expected .= '<li class="incomplete"><a href="#">Step3</a></li>';
+		$expected .= '<li class="incomplete"><a href="#">Step4</a></li>';
+		$expected .= '<li class="incomplete"><a href="#">Confirmation</a></li>';
 		$result = $this->Wizard->progressMenu(array(), array('wrap' => 'li'));
 		$this->assertEquals($expected, $result);
 	}
