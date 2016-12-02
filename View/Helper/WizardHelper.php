@@ -111,7 +111,7 @@ class WizardHelper extends AppHelper {
 		$incomplete = null;
 		foreach ($steps as $title => $step) {
 			if (empty($titles[$step])) {
-				$title = $step;
+				$title = Inflector::humanize($step);
 			} else {
 				$title = $titles[$step];
 			}
@@ -130,7 +130,7 @@ class WizardHelper extends AppHelper {
 						$step
 					), $htmlAttributes, $confirmMessage) . "</$wrap>";
 			} else {
-				$this->output .= "<$wrap class=\"incomplete\">" . $title . "</$wrap>";
+				$this->output .= "<$wrap class=\"incomplete\"><a href=\"#\">$title</a></$wrap>";
 			}
 		}
 		return $this->output;
