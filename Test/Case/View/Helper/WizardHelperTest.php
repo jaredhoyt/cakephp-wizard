@@ -130,9 +130,9 @@ class WizardHelperTest extends CakeTestCase {
 		$expected = '<li class="complete"><a href="/wizard/step1">step1</a></li>';
 		$expected .= '<li class="complete"><a href="/wizard/step2">step2</a></li>';
 		$expected .= '<li class="expected active"><a href="/wizard/gender">gender</a></li>';
-		$expected .= '<li class="incomplete">step3</li>';
-		$expected .= '<li class="incomplete">step4</li>';
-		$expected .= '<li class="incomplete">confirmation</li>';
+		$expected .= '<li class="incomplete"><a href="#">step3</a></li>';
+		$expected .= '<li class="incomplete"><a href="#">step4</a></li>';
+		$expected .= '<li class="incomplete"><a href="#">confirmation</a></li>';
 		$result = $this->Wizard->progressMenu(array(), array('wrap' => 'li'));
 		$this->assertEquals($expected, $result);
 	}
@@ -141,9 +141,9 @@ class WizardHelperTest extends CakeTestCase {
 		$expected = '<div class="complete"><a href="/wizard/step1">Credentials</a></div>';
 		$expected .= '<div class="complete"><a href="/wizard/step2">Address</a></div>';
 		$expected .= '<div class="expected active"><a href="/wizard/gender">Gender</a></div>';
-		$expected .= '<div class="incomplete">Shipping Address</div>';
-		$expected .= '<div class="incomplete">Payment</div>';
-		$expected .= '<div class="incomplete">Confirmation</div>';
+		$expected .= '<div class="incomplete"><a href="#">Shipping Address</a></div>';
+		$expected .= '<div class="incomplete"><a href="#">Payment</a></div>';
+		$expected .= '<div class="incomplete"><a href="#">Confirmation</a></div>';
 
 		$titles = array(
 			'step1' => 'Credentials',
