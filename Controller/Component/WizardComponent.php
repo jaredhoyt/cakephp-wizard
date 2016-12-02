@@ -555,7 +555,7 @@ class WizardComponent extends Component {
 			$step = $this->_getExpectedStep();
 		}
 		$url = array(
-			'controller' => $this->controller->name,
+			'controller' => Inflector::underscore($this->controller->name),
 			'action' => $this->action,
 			$step
 		);
