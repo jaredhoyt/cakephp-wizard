@@ -95,7 +95,8 @@ class WizardHelper extends AppHelper {
  * Returns a set of html elements containing links for each step in the wizard.
  *
  * @param array|string $titles         Array of form steps where the keys are
- *   the steps and the values are the titles to be used for links.
+ *   the steps and the values are the titles to be used for links. If empty then humanized
+ *   step names are used from session.
  * @param array|string $attributes     pass a value for 'wrap' to change the default tag used
  * @param array|string $htmlAttributes Array of options and HTML attributes.
  * @param bool|string  $confirmMessage JavaScript confirmation message. This
@@ -111,7 +112,7 @@ class WizardHelper extends AppHelper {
 		$incomplete = null;
 		foreach ($steps as $title => $step) {
 			if (empty($titles[$step])) {
-				$title = $step;
+				$title = Inflector::humanize($step);
 			} else {
 				$title = $titles[$step];
 			}
@@ -130,7 +131,7 @@ class WizardHelper extends AppHelper {
 						$step
 					), $htmlAttributes, $confirmMessage) . "</$wrap>";
 			} else {
-				$this->output .= "<$wrap class=\"incomplete\">" . $title . "</$wrap>";
+				$this->output .= "<$wrap class=\"incomplete\"><a href=\"#\">$title</a></$wrap>";
 			}
 		}
 		return $this->output;
