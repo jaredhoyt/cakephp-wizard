@@ -122,6 +122,14 @@ class WizardComponent extends Component {
 	public $draftUrl = '/';
 
 /**
+ * If `true` then URL parameters from the first step will be present in the URLs
+ * of all other steps.
+ *
+ * @var bool
+ */
+	public $persistUrlParams = false;
+
+/**
  * If true, the first "non-skipped" branch in a group will be used if a branch has
  * not been included specifically.
  *
@@ -554,11 +562,17 @@ class WizardComponent extends Component {
 		if ($step == null) {
 			$step = $this->_getExpectedStep();
 		}
-		$url = array(
-			'controller' => Inflector::underscore($this->controller->name),
-			'action' => $this->action,
-			$step
-		);
+		if ($this->persistUrlParams) {
+			$this->controller->request->params['action'] = $this->action;
+			$this->controller->request->params['pass'][0] = $step;
+			$url = Router::reverse($this->controller->request);
+		} else {
+			$url = array(
+				'controller' => Inflector::underscore($this->controller->name),
+				'action' => $this->action,
+				$step
+			);
+		}
 		return $this->controller->redirect($url, $status, $exit);
 	}
 
