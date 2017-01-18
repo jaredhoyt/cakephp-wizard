@@ -528,7 +528,9 @@ class WizardComponentTest extends CakeTestCase {
 		$session = $this->Wizard->Session->read('Wizard');
 		$this->assertEmpty($session);
 
-		$CakeRequest = new CakeRequest('/wizard_test/wizard/step1/123?x=7&y=9', true);
+		$url = '/wizard_test/wizard/step1/123?x=7&y=9';
+		$CakeRequest = new CakeRequest($url, true);
+		$CakeRequest->addParams(Router::parse($url));
 		Debugger::log($CakeRequest->params);
 		$CakeResponse = $this->getMock('CakeResponse', array('send'));
 		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
