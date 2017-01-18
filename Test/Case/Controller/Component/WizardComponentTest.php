@@ -528,7 +528,7 @@ class WizardComponentTest extends CakeTestCase {
 		$session = $this->Wizard->Session->read('Wizard');
 		$this->assertEmpty($session);
 
-		$CakeRequest = new CakeRequest('/wizard_test/step1/123?x=7&y=9', true);
+		$CakeRequest = new CakeRequest('/wizard_test/wizard/step1/123?x=7&y=9', true);
 		$CakeResponse = $this->getMock('CakeResponse', array('send'));
 		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
 		$this->Controller->components['Wizard.Wizard']['persistUrlParams'] = true;
@@ -554,7 +554,7 @@ class WizardComponentTest extends CakeTestCase {
 
 		$this->assertInstanceOf('CakeResponse', $CakeResponse);
 		$headers = $CakeResponse->header();
-		$this->assertContains('/wizard/step2/123?x=7&y=9', $headers['Location']);
+		$this->assertContains('/wizard_test/wizard/step2/123?x=7&y=9', $headers['Location']);
 
 		$expectedSession = array(
 			'config' => array(
