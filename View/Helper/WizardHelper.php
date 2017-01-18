@@ -162,9 +162,17 @@ class WizardHelper extends AppHelper {
 		$wizardAction = $this->config('action');
 		if ($this->config('persistUrlParams')) {
 			$url = $this->request->params;
+			$pass = $named = array();
+			if (isset($url['pass'])) {
+				$pass = $url['pass'];
+			}
+			if (isset($url['named'])) {
+				$named = $url['named'];
+			}
 			unset($url['pass'], $url['named'], $url['paging'], $url['models'],
 					$url['url'], $url['url'], $url['autoRender'], $url['bare'],
 					$url['requested'], $url['return'], $url['isAjax'], $url['_Token']);
+			$url = array_merge($url, $pass, $named);
 			if (!empty($this->request->query)) {
 				$url['?'] = $this->request->query;
 			}
