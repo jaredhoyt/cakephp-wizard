@@ -523,4 +523,60 @@ class WizardComponentTest extends CakeTestCase {
 		$resultSession = $this->Wizard->Session->read('Wizard');
 		$this->assertEquals($expectedSession, $resultSession);
 	}
+
+	public function testRedirectPersistUrlParams() {
+		$session = $this->Wizard->Session->read('Wizard');
+		$this->assertEmpty($session);
+
+		$url = '/wizard_test/wizard/step1/123/key:value?x=7&y=9';
+		$CakeRequest = new CakeRequest($url, true);
+		$CakeRequest->addParams(Router::parse($url));
+		$CakeResponse = $this->getMock('CakeResponse', array('send'));
+		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
+		$this->Controller->components['Wizard.Wizard']['persistUrlParams'] = true;
+		$ComponentCollection = new ComponentCollection();
+		$ComponentCollection->init($this->Controller);
+		$this->Controller->Components->init($this->Controller);
+		$this->Wizard = $this->Controller->Wizard;
+		$this->Wizard->initialize($this->Controller);
+
+		$this->Wizard->startup($this->Controller);
+		//$this->Wizard->persistUrlParams = true;
+		// Emulate GET request to set session variables.
+		$this->Wizard->process('step1');
+		// Emulate POST request.
+		$postData = array(
+			'User' => array(
+				'username' => 'admin',
+				'password' => 'pass',
+			),
+		);
+		$this->Wizard->controller->request->data = $postData;
+		$CakeResponse = $this->Wizard->process('step1');
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard_test/wizard/step2/123/key:value?x=7&y=9', $headers['Location']);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step2',
+				'activeStep' => 'step1',
+			),
+			'WizardTest' => array(
+				'step1' => $postData,
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
 }

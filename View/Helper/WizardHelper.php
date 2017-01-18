@@ -126,10 +126,10 @@ class WizardHelper extends AppHelper {
 				if ($step == $activeStep) {
 					$class .= ' active';
 				}
-				$this->output .= "<$wrap class=\"$class\">" . $this->Html->link($title, array(
-						'action' => $wizardAction,
-						$step
-					), $htmlAttributes, $confirmMessage) . "</$wrap>";
+				$url = $this->__getStepUrl($step);
+				$this->output .= "<$wrap class=\"$class\">";
+				$this->output .= $this->Html->link($title, $url, $htmlAttributes, $confirmMessage);
+				$this->output .= "</$wrap>";
 			} else {
 				$this->output .= "<$wrap class=\"incomplete\"><a href=\"#\">$title</a></$wrap>";
 			}
@@ -150,5 +150,40 @@ class WizardHelper extends AppHelper {
 			$options['url'][] = $this->request->params['pass'][0];
 		}
 		return $this->Form->create($model, $options);
+	}
+
+/**
+ * Constructs the URL for a given step.
+ *
+ * @param string $step step action.
+ * @return array
+ */
+	private function __getStepUrl($step) {
+		$wizardAction = $this->config('action');
+		if ($this->config('persistUrlParams')) {
+			$url = $this->request->params;
+			$pass = $named = array();
+			if (isset($url['pass'])) {
+				$pass = $url['pass'];
+			}
+			if (isset($url['named'])) {
+				$named = $url['named'];
+			}
+			unset($url['pass'], $url['named'], $url['paging'], $url['models'],
+					$url['url'], $url['url'], $url['autoRender'], $url['bare'],
+					$url['requested'], $url['return'], $url['isAjax'], $url['_Token']);
+			$url = array_merge($url, $pass, $named);
+			if (!empty($this->request->query)) {
+				$url['?'] = $this->request->query;
+			}
+			$url['action'] = $this->action;
+			$url[0] = $step;
+		} else {
+			$url = array(
+				'action' => $wizardAction,
+				$step,
+			);
+		}
+		return $url;
 	}
 }

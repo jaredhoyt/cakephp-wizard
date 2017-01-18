@@ -122,6 +122,14 @@ class WizardComponent extends Component {
 	public $draftUrl = '/';
 
 /**
+ * If `true` then URL parameters from the first step will be present in the URLs
+ * of all other steps.
+ *
+ * @var bool
+ */
+	public $persistUrlParams = false;
+
+/**
  * If true, the first "non-skipped" branch in a group will be used if a branch has
  * not been included specifically.
  *
@@ -554,11 +562,31 @@ class WizardComponent extends Component {
 		if ($step == null) {
 			$step = $this->_getExpectedStep();
 		}
-		$url = array(
-			'controller' => Inflector::underscore($this->controller->name),
-			'action' => $this->action,
-			$step
-		);
+		if ($this->persistUrlParams) {
+			$url = $this->controller->request->params;
+			$pass = $named = array();
+			if (isset($url['pass'])) {
+				$pass = $url['pass'];
+			}
+			if (isset($url['named'])) {
+				$named = $url['named'];
+			}
+			unset($url['pass'], $url['named'], $url['paging'], $url['models'],
+					$url['url'], $url['url'], $url['autoRender'], $url['bare'],
+					$url['requested'], $url['return'], $url['isAjax'], $url['_Token']);
+			$url = array_merge($url, $pass, $named);
+			$url['action'] = $this->action;
+			$url[0] = $step;
+			if (!empty($this->controller->request->query)) {
+				$url['?'] = $this->controller->request->query;
+			}
+		} else {
+			$url = array(
+				'controller' => Inflector::underscore($this->controller->name),
+				'action' => $this->action,
+				$step,
+			);
+		}
 		return $this->controller->redirect($url, $status, $exit);
 	}
 
