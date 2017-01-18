@@ -164,12 +164,13 @@ class WizardHelper extends AppHelper {
 			$url = $this->request->params;
 			unset($url['pass'], $url['named'], $url['paging'], $url['models'],
 					$url['url'], $url['url'], $url['autoRender'], $url['bare'],
-					$url['requested'], $url['return'], $url['_Token']);
+					$url['requested'], $url['return'], $url['isAjax'], $url['_Token']);
 			if (!empty($this->request->query)) {
 				$url['?'] = $this->request->query;
 			}
 			$url['action'] = $this->action;
 			$url[0] = $step;
+			Debugger::log($url);
 		} else {
 			$url = array(
 				'action' => $wizardAction,
