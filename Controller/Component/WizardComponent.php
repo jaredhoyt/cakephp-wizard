@@ -570,7 +570,7 @@ class WizardComponent extends Component {
 			$url = array(
 				'controller' => Inflector::underscore($this->controller->name),
 				'action' => $this->action,
-				$step
+				$step,
 			);
 		}
 		return $this->controller->redirect($url, $status, $exit);
