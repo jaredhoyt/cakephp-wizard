@@ -182,8 +182,8 @@ class WizardHelperTest extends CakeTestCase {
 		);
 		CakeSession::write('Wizard', $session);
 
-		$expected = '<div class="complete"><a href="/wizard_test/wizard/step1/123?x=7&y=9">Step1</a></div>';
-		$expected .= '<div class="complete"><a href="/wizard_test/wizard/step2/123?x=7&y=9">Step2</a></div>';
+		$expected = '<div class="complete"><a href="/wizard_test/wizard/step1/123?x=7&amp;y=9">Step1</a></div>';
+		$expected .= '<div class="complete"><a href="/wizard_test/wizard/step2/123?x=7&amp;y=9">Step2</a></div>';
 		$expected .= '<div class="expected active"><a href="/wizard_test/wizard/gender/123?x=7&amp;y=9">Gender</a></div>';
 		$expected .= '<div class="incomplete"><a href="#">Step3</a></div>';
 		$expected .= '<div class="incomplete"><a href="#">Step4</a></div>';

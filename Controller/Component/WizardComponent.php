@@ -580,7 +580,6 @@ class WizardComponent extends Component {
 			if (!empty($this->controller->request->query)) {
 				$url['?'] = $this->controller->request->query;
 			}
-			Debugger::log($url);
 		} else {
 			$url = array(
 				'controller' => Inflector::underscore($this->controller->name),

@@ -178,7 +178,6 @@ class WizardHelper extends AppHelper {
 			}
 			$url['action'] = $this->action;
 			$url[0] = $step;
-			Debugger::log($url);
 		} else {
 			$url = array(
 				'action' => $wizardAction,
