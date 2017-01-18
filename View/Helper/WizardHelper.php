@@ -161,9 +161,15 @@ class WizardHelper extends AppHelper {
 	private function __getStepUrl($step) {
 		$wizardAction = $this->config('action');
 		if ($this->config('persistUrlParams')) {
-			$this->request->params['action'] = $wizardAction;
-			$this->request->params['pass'][0] = $step;
-			$url = Router::parse(Router::reverse($this->request));
+			$url = $this->request->params;
+			unset($url['pass'], $url['named'], $url['paging'], $url['models'],
+					$url['url'], $url['url'], $url['autoRender'], $url['bare'],
+					$url['requested'], $url['return'], $url['_Token']);
+			if (!empty($this->request->query)) {
+				$url['?'] = $this->request->query;
+			}
+			$url['action'] = $this->action;
+			$url[0] = $step;
 		} else {
 			$url = array(
 				'action' => $wizardAction,

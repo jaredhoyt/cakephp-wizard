@@ -563,9 +563,15 @@ class WizardComponent extends Component {
 			$step = $this->_getExpectedStep();
 		}
 		if ($this->persistUrlParams) {
-			$this->controller->request->params['action'] = $this->action;
-			$this->controller->request->params['pass'][0] = $step;
-			$url = Router::parse(Router::reverse($this->controller->request));
+			$url = $this->controller->request->params;
+			unset($url['pass'], $url['named'], $url['paging'], $url['models'],
+					$url['url'], $url['url'], $url['autoRender'], $url['bare'],
+					$url['requested'], $url['return'], $url['_Token']);
+			if (!empty($this->controller->request->query)) {
+				$url['?'] = $this->request->query;
+			}
+			$url['action'] = $this->action;
+			$url[0] = $step;
 		} else {
 			$url = array(
 				'controller' => Inflector::underscore($this->controller->name),
