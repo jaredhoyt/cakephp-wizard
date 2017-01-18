@@ -529,6 +529,7 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($session);
 
 		$CakeRequest = new CakeRequest('/wizard_test/wizard/step1/123?x=7&y=9', true);
+		Debugger::log($CakeRequest->params);
 		$CakeResponse = $this->getMock('CakeResponse', array('send'));
 		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
 		$this->Controller->components['Wizard.Wizard']['persistUrlParams'] = true;
