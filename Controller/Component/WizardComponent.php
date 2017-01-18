@@ -563,6 +563,7 @@ class WizardComponent extends Component {
 			$step = $this->_getExpectedStep();
 		}
 		if ($this->persistUrlParams) {
+			Debugger::log($this->controller->request->params);
 			$this->controller->request->params['action'] = $this->action;
 			$this->controller->request->params['pass'][0] = $step;
 			$url = Router::reverse($this->controller->request);

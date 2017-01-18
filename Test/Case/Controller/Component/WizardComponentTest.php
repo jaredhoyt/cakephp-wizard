@@ -529,6 +529,7 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEmpty($session);
 
 		$CakeRequest = new CakeRequest('/wizard_test/step1/123?x=7&y=9', false);
+		Debugger::log($CakeRequest->params);
 		$CakeResponse = $this->getMock('CakeResponse', array('send'));
 		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
 		$this->Controller->components['Wizard.Wizard']['persistUrlParams'] = true;
@@ -536,9 +537,13 @@ class WizardComponentTest extends CakeTestCase {
 		$ComponentCollection->init($this->Controller);
 		$this->Controller->Components->init($this->Controller);
 		$this->Wizard = $this->Controller->Wizard;
+		Debugger::log('persistUrlParams: ' . $this->Controller->Wizard->persistUrlParams);
 		$this->Wizard->initialize($this->Controller);
+		Debugger::log('persistUrlParams: ' . $this->Controller->Wizard->persistUrlParams);
 
 		$this->Wizard->startup($this->Controller);
+		Debugger::log('persistUrlParams: ' . $this->Controller->Wizard->persistUrlParams);
+		//$this->Wizard->persistUrlParams = true;
 		// Emulate GET request to set session variables.
 		$this->Wizard->process('step1');
 		// Emulate POST request.
