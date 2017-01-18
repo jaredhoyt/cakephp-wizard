@@ -156,4 +156,39 @@ class WizardHelperTest extends CakeTestCase {
 		$result = $this->Wizard->progressMenu($titles);
 		$this->assertEquals($expected, $result);
 	}
+
+	public function testProgressMenuPersistUrlParams() {
+		$url = '/wizard_test/wizard/gender/123?x=7&y=9';
+		$CakeRequest = new CakeRequest($url, true);
+		$CakeRequest->addParams(Router::parse($url));
+		$Controller = new Controller($CakeRequest, new CakeResponse());
+		$View = new View($Controller);
+		$this->Wizard = new WizardHelper($View);
+		$session = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'gender',
+				'activeStep' => 'gender',
+				'persistUrlParams' => true,
+			),
+		);
+		CakeSession::write('Wizard', $session);
+
+		$expected = '<div class="complete"><a href="/wizard_test/wizard/step1/123?x=7&y=9">Step1</a></div>';
+		$expected .= '<div class="complete"><a href="/wizard_test/wizard/step2/123?x=7&y=9">Step2</a></div>';
+		$expected .= '<div class="expected active"><a href="/wizard_test/wizard/gender/123?x=7&y=9">Gender</a></div>';
+		$expected .= '<div class="incomplete"><a href="#">Step3</a></div>';
+		$expected .= '<div class="incomplete"><a href="#">Step4</a></div>';
+		$expected .= '<div class="incomplete"><a href="#">Confirmation</a></div>';
+		$result = $this->Wizard->progressMenu();
+		$this->assertEquals($expected, $result);
+	}
 }

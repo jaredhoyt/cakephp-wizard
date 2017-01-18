@@ -565,7 +565,7 @@ class WizardComponent extends Component {
 		if ($this->persistUrlParams) {
 			$this->controller->request->params['action'] = $this->action;
 			$this->controller->request->params['pass'][0] = $step;
-			$url = Router::reverse($this->controller->request);
+			$url = Router::parse(Router::reverse($this->controller->request));
 		} else {
 			$url = array(
 				'controller' => Inflector::underscore($this->controller->name),
