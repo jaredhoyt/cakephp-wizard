@@ -567,11 +567,11 @@ class WizardComponent extends Component {
 			unset($url['pass'], $url['named'], $url['paging'], $url['models'],
 					$url['url'], $url['url'], $url['autoRender'], $url['bare'],
 					$url['requested'], $url['return'], $url['isAjax'], $url['_Token']);
+			$url['action'] = $this->action;
+			$url[0] = $step;
 			if (!empty($this->controller->request->query)) {
 				$url['?'] = $this->controller->request->query;
 			}
-			$url['action'] = $this->action;
-			$url[0] = $step;
 			Debugger::log($url);
 		} else {
 			$url = array(
