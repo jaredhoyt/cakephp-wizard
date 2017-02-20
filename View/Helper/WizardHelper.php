@@ -23,6 +23,13 @@ class WizardHelper extends AppHelper {
 	public $output = null;
 
 /**
+ * Holds the root of the session key for data storage.
+ *
+ * @var string
+ */
+	public $sessionRootKey = 'Wizard';
+
+/**
  * undocumented function
  *
  * @param string $key optional key to retrieve the existing value
@@ -30,9 +37,9 @@ class WizardHelper extends AppHelper {
  */
 	public function config($key = null) {
 		if ($key == null) {
-			return $this->Session->read('Wizard.config');
+			return $this->Session->read($this->sessionRootKey . '.config');
 		} else {
-			$wizardData = $this->Session->read('Wizard.config.' . $key);
+			$wizardData = $this->Session->read($this->sessionRootKey . '.config.' . $key);
 			if (!empty($wizardData)) {
 				return $wizardData;
 			} else {
