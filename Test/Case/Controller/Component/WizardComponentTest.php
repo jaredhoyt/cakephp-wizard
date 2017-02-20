@@ -230,7 +230,7 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEquals($expectedSteps, $resultSteps);
 		$this->assertEquals($expectedSteps, $this->Wizard->steps);
 		$expectedHelpers = array(
-			'Wizard.Wizard',
+			'Wizard.Wizard' => array('sessionRootKey' => 'Wizard'),
 		);
 		$this->assertEquals($expectedHelpers, $this->Wizard->controller->helpers);
 	}
