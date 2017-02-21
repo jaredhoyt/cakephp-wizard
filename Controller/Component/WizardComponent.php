@@ -215,13 +215,6 @@ class WizardComponent extends Component {
  */
 	public function initialize(Controller $controller) {
 		$this->controller = $controller;
-		if ($this->controller->Session->check($this->sessionRootKey . '.complete')) {
-			$this->_sessionKey = $this->sessionRootKey . '.complete';
-		} else {
-			$this->_sessionKey = $this->sessionRootKey . '.' . $controller->name;
-		}
-		$this->_configKey = $this->sessionRootKey . '.config';
-		$this->_branchKey = $this->sessionRootKey . '.branches.' . $controller->name;
 	}
 
 /**
@@ -234,6 +227,13 @@ class WizardComponent extends Component {
  * @return void
  */
 	public function startup(Controller $controller) {
+		if ($this->controller->Session->check($this->sessionRootKey . '.complete')) {
+			$this->_sessionKey = $this->sessionRootKey . '.complete';
+		} else {
+			$this->_sessionKey = $this->sessionRootKey . '.' . $controller->name;
+		}
+		$this->_configKey = $this->sessionRootKey . '.config';
+		$this->_branchKey = $this->sessionRootKey . '.branches.' . $controller->name;
 		$this->steps = $this->_parseSteps($this->steps);
 		$this->config('action', $this->action);
 		$this->config('steps', $this->steps);

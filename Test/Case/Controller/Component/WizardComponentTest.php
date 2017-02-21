@@ -275,6 +275,36 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEquals($expectedSteps, $this->Wizard->steps);
 	}
 
+	public function testStartupCustomRootSessionKey() {
+		$configAction = $this->Wizard->Session->read('WizardInstance001.config.action');
+		$this->assertEmpty($configAction);
+		$configSteps = $this->Wizard->Session->read('WizardInstance001.config.steps');
+		$this->assertEmpty($configSteps);
+		$this->assertEmpty($this->Wizard->controller->helpers);
+
+		$this->Wizard->sessionRootKey = 'WizardInstance001';
+		$this->Wizard->startup($this->Controller);
+
+		$expectedAction = 'wizard';
+		$resultAction = $this->Wizard->Session->read('WizardInstance001.config.action');
+		$this->assertEquals($expectedAction, $resultAction);
+		$expectedSteps = array(
+			'step1',
+			'step2',
+			'gender',
+			'step3',
+			'step4',
+			'confirmation',
+		);
+		$resultSteps = $this->Wizard->Session->read('WizardInstance001.config.steps');
+		$this->assertEquals($expectedSteps, $resultSteps);
+		$this->assertEquals($expectedSteps, $this->Wizard->steps);
+		$expectedHelpers = array(
+			'Wizard.Wizard' => array('sessionRootKey' => 'WizardInstance001'),
+		);
+		$this->assertEquals($expectedHelpers, $this->Wizard->controller->helpers);
+	}
+
 	public function testProcessStepOneGet() {
 		$session = $this->Wizard->Session->read('Wizard');
 		$this->assertEmpty($session);
