@@ -227,10 +227,10 @@ class WizardComponent extends Component {
 		if ($this->controller->Session->check($this->sessionRootKey . '.complete')) {
 			$this->_sessionKey = $this->sessionRootKey . '.complete';
 		} else {
-			$this->_sessionKey = $this->sessionRootKey . '.' . $controller->name;
+			$this->_sessionKey = $this->sessionRootKey . '.' . $this->controller->name;
 		}
 		$this->_configKey = $this->sessionRootKey . '.config';
-		$this->_branchKey = $this->sessionRootKey . '.branches.' . $controller->name;
+		$this->_branchKey = $this->sessionRootKey . '.branches.' . $this->controller->name;
 	}
 
 /**
