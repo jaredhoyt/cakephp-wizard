@@ -411,7 +411,9 @@ class WizardComponentTest extends CakeTestCase {
 
 		$expectedSession = array(
 			'branches' => array(
-				'WizardTest' => array(),
+				'WizardTest' => array(
+					'female' => 'branch',
+				),
 			),
 			'config' => array(
 				'steps' => array(

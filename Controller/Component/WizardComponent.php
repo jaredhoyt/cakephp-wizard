@@ -227,12 +227,16 @@ class WizardComponent extends Component {
  * @return void
  */
 	public function startup(Controller $controller) {
-		$this->steps = $this->_parseSteps($this->steps);
 		$this->config('action', $this->action);
-		$this->config('steps', $this->steps);
+		$this->_configSteps();
 		if (!in_array('Wizard.Wizard', $this->controller->helpers) && !array_key_exists('Wizard.Wizard', $this->controller->helpers)) {
 			$this->controller->helpers[] = 'Wizard.Wizard';
 		}
+	}
+
+	protected function _configSteps() {
+		$this->steps = $this->_parseSteps($this->steps);
+		$this->config('steps', $this->steps);
 	}
 
 /**
@@ -584,6 +588,7 @@ class WizardComponent extends Component {
 		}
 		$branches[$name] = $value;
 		$this->controller->Session->write($this->_branchKey, $branches);
+		$this->_configSteps();
 	}
 
 /**
