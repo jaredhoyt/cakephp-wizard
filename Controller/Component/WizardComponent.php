@@ -556,6 +556,7 @@ class WizardComponent extends Component {
 			$data = $this->controller->request->data;
 		}
 		$this->controller->Session->write("$this->_sessionKey.$step", $data);
+		$this->_getExpectedStep();
 	}
 
 /**
@@ -604,7 +605,6 @@ class WizardComponent extends Component {
 		$branches[$name] = $value;
 		$this->controller->Session->write($this->_branchKey, $branches);
 		$this->_configSteps($this->_stepsAndBranches);
-		$this->_getExpectedStep();
 	}
 
 /**
@@ -676,6 +676,7 @@ class WizardComponent extends Component {
  */
 	public function unbranch($branch) {
 		$this->controller->Session->delete("$this->_branchKey.$branch");
+		$this->_configSteps($this->_stepsAndBranches);
 	}
 
 }
