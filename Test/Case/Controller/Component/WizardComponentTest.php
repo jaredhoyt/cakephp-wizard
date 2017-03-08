@@ -23,6 +23,7 @@ class WizardUserMock extends Model {
 /**
  * AuthTestController class
  *
+ * @property WizardComponent $Wizard
  * @package       Wizard.Test.Case.Controller.Component
  */
 class WizardTestController extends Controller {
@@ -66,6 +67,22 @@ class WizardTestController extends Controller {
 
 	public function processStep2() {
 		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function processGender() {
+		if (!empty($this->request->data)) {
+			if ($this->Wizard->defaultBranch === false) {
+				if ($this->request->data['WizardUserMock']['gender'] == 'female') {
+					$this->Wizard->unbranch('male');
+					$this->Wizard->branch('female');
+				} else {
+					$this->Wizard->unbranch('female');
+					$this->Wizard->branch('male');
+				}
+			}
 			return true;
 		}
 		return false;
@@ -136,7 +153,7 @@ class WizardComponentTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		$this->Wizard->Session->delete('Wizard');
+		CakeSession::destroy();
 		unset($this->Controller, $this->Wizard);
 	}
 
@@ -372,6 +389,87 @@ class WizardComponentTest extends CakeTestCase {
 		);
 		$resultSession = $this->Wizard->Session->read('Wizard');
 		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+/**
+ * Tests 'autoAdvance' and 'defaultBranch' settings set to false and manual call to `branch()`.
+ *
+ * @return void
+ */
+	public function testProcessGenderPost() {
+		$this->Wizard->Session->delete('Wizard');
+		unset($this->Controller, $this->Wizard);
+		$CakeRequest = new CakeRequest(null, false);
+		$CakeResponse = $this->getMock('CakeResponse', array('send'));
+		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
+		$this->Controller->components['Wizard.Wizard']['autoAdvance'] = false;
+		$this->Controller->components['Wizard.Wizard']['defaultBranch'] = false;
+		$ComponentCollection = new ComponentCollection();
+		$ComponentCollection->init($this->Controller);
+		$this->Controller->Components->init($this->Controller);
+		$this->Wizard = $this->Controller->Wizard;
+		$this->Wizard->initialize($this->Controller);
+
+		// Set session prerequisites.
+		$session = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'gender',
+				'activeStep' => 'gender',
+			),
+			'WizardTest' => array(
+				'step1' => array(),
+				'step2' => array(),
+			),
+		);
+		$this->Wizard->Session->write('Wizard', $session);
+
+		$this->Wizard->startup($this->Controller);
+		$postData = array(
+			'WizardUserMock' => array(
+				'gender' => 'female',
+			),
+		);
+		$this->Wizard->controller->request->data = $postData;
+		$CakeResponse = $this->Wizard->process('gender');
+
+		$expectedSession = array(
+			'branches' => array(
+				'WizardTest' => array(
+					'female' => 'branch',
+				),
+			),
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step4',
+					'step5',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step4',
+				'activeStep' => 'gender',
+			),
+			'WizardTest' => array(
+				'step1' => array(),
+				'step2' => array(),
+				'gender' => $postData,
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard/step4', $headers['Location']);
 	}
 
 	public function testProcessAutovalidatePost() {

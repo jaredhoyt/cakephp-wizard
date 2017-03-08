@@ -214,6 +214,13 @@ class WizardComponent extends Component {
 	protected $_wizardUrl = array();
 
 /**
+ * Holds the array with steps and branches from the initial Wizard configuration.
+ *
+ * @var array
+ */
+	protected $_stepsAndBranches = array();
+
+/**
  * Initializes WizardComponent for use in the controller
  *
  * @param \Controller|object $controller A reference to the instantiating controller object
@@ -224,6 +231,7 @@ class WizardComponent extends Component {
 	public function initialize(Controller $controller) {
 		$this->controller = $controller;
 		$this->__setSessionKeys();
+		$this->_stepsAndBranches = $this->steps;
 	}
 
 /**
@@ -252,14 +260,25 @@ class WizardComponent extends Component {
  */
 	public function startup(Controller $controller) {
 		$this->__setSessionKeys();
-		$this->steps = $this->_parseSteps($this->steps);
 		$this->config('action', $this->action);
-		$this->config('steps', $this->steps);
+		$this->_configSteps($this->steps);
 		if (!in_array('Wizard.Wizard', $this->controller->helpers) && !array_key_exists('Wizard.Wizard', $this->controller->helpers)) {
 			$this->controller->helpers['Wizard.Wizard'] = array(
 				'sessionRootKey' => $this->sessionRootKey,
 			);
 		}
+	}
+
+/**
+ * Parses the steps array by stripping off nested arrays not included in the branches
+ * and writes a simple array with the correct steps to session.
+ *
+ * @param array $steps Array to be parsed for nested arrays.
+ * @return void
+ */
+	protected function _configSteps($steps) {
+		$this->steps = $this->_parseSteps($steps);
+		$this->config('steps', $this->steps);
 	}
 
 /**
@@ -564,6 +583,8 @@ class WizardComponent extends Component {
 			$data = $this->controller->request->data;
 		}
 		$this->controller->Session->write("$this->_sessionKey.$step", $data);
+		$this->_getExpectedStep();
+		$this->_setCurrentStep($step);
 	}
 
 /**
@@ -631,6 +652,7 @@ class WizardComponent extends Component {
 		}
 		$branches[$name] = $value;
 		$this->controller->Session->write($this->_branchKey, $branches);
+		$this->_configSteps($this->_stepsAndBranches);
 	}
 
 /**
@@ -702,6 +724,7 @@ class WizardComponent extends Component {
  */
 	public function unbranch($branch) {
 		$this->controller->Session->delete("$this->_branchKey.$branch");
+		$this->_configSteps($this->_stepsAndBranches);
 	}
 
 }
