@@ -74,9 +74,12 @@ class WizardTestController extends Controller {
 
 	public function processGender() {
 		if (!empty($this->request->data)) {
-			if ($this->request->data['User']['gender'] == 'female') {
+			if ($this->request->data['WizardUserMock']['gender'] == 'female') {
 				$this->Wizard->unbranch('male');
 				$this->Wizard->branch('female');
+			} else {
+				$this->Wizard->unbranch('female');
+				$this->Wizard->branch('male');
 			}
 			return true;
 		}
@@ -357,6 +360,19 @@ class WizardComponentTest extends CakeTestCase {
 	}
 
 	public function testProcessGenderPost() {
+		$this->Wizard->Session->delete('Wizard');
+		unset($this->Controller, $this->Wizard);
+		$CakeRequest = new CakeRequest(null, false);
+		$CakeResponse = $this->getMock('CakeResponse', array('send'));
+		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
+		$this->Controller->components['Wizard.Wizard']['autoAdvance'] = false;
+		$this->Controller->components['Wizard.Wizard']['defaultBranch'] = false;
+		$ComponentCollection = new ComponentCollection();
+		$ComponentCollection->init($this->Controller);
+		$this->Controller->Components->init($this->Controller);
+		$this->Wizard = $this->Controller->Wizard;
+		$this->Wizard->initialize($this->Controller);
+
 		// Set session prerequisites.
 		$session = array(
 			'config' => array(
@@ -364,8 +380,6 @@ class WizardComponentTest extends CakeTestCase {
 					'step1',
 					'step2',
 					'gender',
-					'step3',
-					'step4',
 					'confirmation',
 				),
 				'action' => 'wizard',
@@ -381,7 +395,7 @@ class WizardComponentTest extends CakeTestCase {
 
 		$this->Wizard->startup($this->Controller);
 		$postData = array(
-			'User' => array(
+			'WizardUserMock' => array(
 				'gender' => 'female',
 			),
 		);
