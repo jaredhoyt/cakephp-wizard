@@ -557,6 +557,7 @@ class WizardComponent extends Component {
 		}
 		$this->controller->Session->write("$this->_sessionKey.$step", $data);
 		$this->_getExpectedStep();
+		$this->_setCurrentStep($step);
 	}
 
 /**
