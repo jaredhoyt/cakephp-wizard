@@ -157,6 +157,13 @@ class WizardComponent extends Component {
 	public $nestedViews = false;
 
 /**
+ * Holds the root of the session key for data storage.
+ *
+ * @var string
+ */
+	public $sessionRootKey = 'Wizard';
+
+/**
  * Other components used.
  *
  * @var array
@@ -215,14 +222,23 @@ class WizardComponent extends Component {
  */
 	public function initialize(Controller $controller) {
 		$this->controller = $controller;
-		if ($this->controller->Session->check('Wizard.complete')) {
-			$this->_sessionKey = 'Wizard.complete';
-		} else {
-			$this->_sessionKey = 'Wizard.' . $controller->name;
-		}
-		$this->_configKey = 'Wizard.config';
-		$this->_branchKey = 'Wizard.branches.' . $controller->name;
+		$this->__setSessionKeys();
 		$this->_stepsAndBranches = $this->steps;
+	}
+
+/**
+ * Sets session keys used by this component.
+ *
+ * @return void
+ */
+	private function __setSessionKeys() {
+		if ($this->controller->Session->check($this->sessionRootKey . '.complete')) {
+			$this->_sessionKey = $this->sessionRootKey . '.complete';
+		} else {
+			$this->_sessionKey = $this->sessionRootKey . '.' . $this->controller->name;
+		}
+		$this->_configKey = $this->sessionRootKey . '.config';
+		$this->_branchKey = $this->sessionRootKey . '.branches.' . $this->controller->name;
 	}
 
 /**
@@ -235,10 +251,13 @@ class WizardComponent extends Component {
  * @return void
  */
 	public function startup(Controller $controller) {
+		$this->__setSessionKeys();
 		$this->config('action', $this->action);
 		$this->_configSteps($this->steps);
 		if (!in_array('Wizard.Wizard', $this->controller->helpers) && !array_key_exists('Wizard.Wizard', $this->controller->helpers)) {
-			$this->controller->helpers[] = 'Wizard.Wizard';
+			$this->controller->helpers['Wizard.Wizard'] = array(
+				'sessionRootKey' => $this->sessionRootKey,
+			);
 		}
 	}
 
@@ -358,7 +377,7 @@ class WizardComponent extends Component {
 			return $this->controller->redirect($this->draftUrl);
 		}
 		if (empty($step)) {
-			if ($this->controller->Session->check('Wizard.complete')) {
+			if ($this->controller->Session->check($this->sessionRootKey . '.complete')) {
 				if (method_exists($this->controller, 'afterComplete')) {
 					$this->controller->afterComplete();
 				}
@@ -393,7 +412,7 @@ class WizardComponent extends Component {
 							}
 							return $this->redirect(current($this->steps));
 						} else {
-							$this->controller->Session->write('Wizard.complete', $this->read());
+							$this->controller->Session->write($this->sessionRootKey . '.complete', $this->read());
 							$this->reset();
 							return $this->controller->redirect(array('action' => $this->action));
 						}
