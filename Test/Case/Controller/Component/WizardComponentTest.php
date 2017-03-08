@@ -23,6 +23,7 @@ class WizardUserMock extends Model {
 /**
  * AuthTestController class
  *
+ * @property WizardComponent $Wizard
  * @package       Wizard.Test.Case.Controller.Component
  */
 class WizardTestController extends Controller {
@@ -66,6 +67,17 @@ class WizardTestController extends Controller {
 
 	public function processStep2() {
 		if (!empty($this->request->data)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function processGender() {
+		if (!empty($this->request->data)) {
+			if ($this->request->data['User']['gender'] == 'female') {
+				$this->Wizard->unbranch('male');
+				$this->Wizard->branch('female');
+			}
 			return true;
 		}
 		return false;
@@ -338,6 +350,66 @@ class WizardComponentTest extends CakeTestCase {
 			),
 			'WizardTest' => array(
 				'step1' => $postData,
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+	public function testProcessGenderPost() {
+		// Set session prerequisites.
+		$session = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'gender',
+				'activeStep' => 'gender',
+			),
+			'WizardTest' => array(
+				'step1' => array(),
+				'step2' => array(),
+			),
+		);
+		$this->Wizard->Session->write('Wizard', $session);
+
+		$this->Wizard->startup($this->Controller);
+		$postData = array(
+			'User' => array(
+				'gender' => 'female',
+			),
+		);
+		$this->Wizard->controller->request->data = $postData;
+		$CakeResponse = $this->Wizard->process('gender');
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard/step4', $headers['Location']);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step4',
+					'step5',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step4',
+				'activeStep' => 'step4',
+			),
+			'complete' => array(
+				'step1' => array(),
+				'step2' => array(),
+				'gender' => $postData,
 			),
 		);
 		$resultSession = $this->Wizard->Session->read('Wizard');
