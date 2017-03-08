@@ -198,6 +198,8 @@ class WizardComponent extends Component {
  */
 	protected $_wizardUrl = array();
 
+	protected $_stepsAndBranches = array();
+
 /**
  * Initializes WizardComponent for use in the controller
  *
@@ -215,6 +217,7 @@ class WizardComponent extends Component {
 		}
 		$this->_configKey = 'Wizard.config';
 		$this->_branchKey = 'Wizard.branches.' . $controller->name;
+		$this->_stepsAndBranches = $this->steps;
 	}
 
 /**
@@ -228,14 +231,14 @@ class WizardComponent extends Component {
  */
 	public function startup(Controller $controller) {
 		$this->config('action', $this->action);
-		$this->_configSteps();
+		$this->_configSteps($this->steps);
 		if (!in_array('Wizard.Wizard', $this->controller->helpers) && !array_key_exists('Wizard.Wizard', $this->controller->helpers)) {
 			$this->controller->helpers[] = 'Wizard.Wizard';
 		}
 	}
 
-	protected function _configSteps() {
-		$this->steps = $this->_parseSteps($this->steps);
+	protected function _configSteps($steps) {
+		$this->steps = $this->_parseSteps($steps);
 		$this->config('steps', $this->steps);
 	}
 
@@ -588,7 +591,7 @@ class WizardComponent extends Component {
 		}
 		$branches[$name] = $value;
 		$this->controller->Session->write($this->_branchKey, $branches);
-		$this->_configSteps();
+		$this->_configSteps($this->_stepsAndBranches);
 	}
 
 /**
