@@ -74,12 +74,14 @@ class WizardTestController extends Controller {
 
 	public function processGender() {
 		if (!empty($this->request->data)) {
-			if ($this->request->data['WizardUserMock']['gender'] == 'female') {
-				$this->Wizard->unbranch('male');
-				$this->Wizard->branch('female');
-			} else {
-				$this->Wizard->unbranch('female');
-				$this->Wizard->branch('male');
+			if ($this->components['Wizard.Wizard']['defaultBranch'] === false) {
+				if ($this->request->data['WizardUserMock']['gender'] == 'female') {
+					$this->Wizard->unbranch('male');
+					$this->Wizard->branch('female');
+				} else {
+					$this->Wizard->unbranch('female');
+					$this->Wizard->branch('male');
+				}
 			}
 			return true;
 		}
@@ -402,10 +404,6 @@ class WizardComponentTest extends CakeTestCase {
 		$this->Wizard->controller->request->data = $postData;
 		$CakeResponse = $this->Wizard->process('gender');
 
-		$this->assertInstanceOf('CakeResponse', $CakeResponse);
-		$headers = $CakeResponse->header();
-		$this->assertContains('/wizard/step4', $headers['Location']);
-
 		$expectedSession = array(
 			'config' => array(
 				'steps' => array(
@@ -428,6 +426,10 @@ class WizardComponentTest extends CakeTestCase {
 		);
 		$resultSession = $this->Wizard->Session->read('Wizard');
 		$this->assertEquals($expectedSession, $resultSession);
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard/step4', $headers['Location']);
 	}
 
 	public function testProcessAutovalidatePost() {
