@@ -361,9 +361,11 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEquals($expectedSession, $resultSession);
 	}
 
-	/**
-	 * Tests 'autoAdvance' and 'defaultBranch' settings set to false and manual call to `branch()`.
-	 */
+/**
+ * Tests 'autoAdvance' and 'defaultBranch' settings set to false and manual call to `branch()`.
+ *
+ * @return void
+ */
 	public function testProcessGenderPost() {
 		$this->Wizard->Session->delete('Wizard');
 		unset($this->Controller, $this->Wizard);
@@ -408,7 +410,9 @@ class WizardComponentTest extends CakeTestCase {
 		$CakeResponse = $this->Wizard->process('gender');
 
 		$expectedSession = array(
-			'branches' => array(),
+			'branches' => array(
+				'WizardTest' => array(),
+			),
 			'config' => array(
 				'steps' => array(
 					'step1',
@@ -422,12 +426,11 @@ class WizardComponentTest extends CakeTestCase {
 				'expectedStep' => 'step4',
 				'activeStep' => 'gender',
 			),
-			'complete' => array(
+			'WizardTest' => array(
 				'step1' => array(),
 				'step2' => array(),
 				'gender' => $postData,
 			),
-			'WizardTest' => array(),
 		);
 		$resultSession = $this->Wizard->Session->read('Wizard');
 		$this->assertEquals($expectedSession, $resultSession);
