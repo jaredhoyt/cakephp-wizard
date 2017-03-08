@@ -198,6 +198,11 @@ class WizardComponent extends Component {
  */
 	protected $_wizardUrl = array();
 
+/**
+ * Holds the array with steps and branches from the initial Wizard configuration.
+ *
+ * @var array
+ */
 	protected $_stepsAndBranches = array();
 
 /**
@@ -237,6 +242,13 @@ class WizardComponent extends Component {
 		}
 	}
 
+/**
+ * Parses the steps array by stripping off nested arrays not included in the branches
+ * and writes a simple array with the correct steps to session.
+ *
+ * @param array $steps Array to be parsed for nested arrays.
+ * @return void
+ */
 	protected function _configSteps($steps) {
 		$this->steps = $this->_parseSteps($steps);
 		$this->config('steps', $this->steps);
@@ -592,6 +604,7 @@ class WizardComponent extends Component {
 		$branches[$name] = $value;
 		$this->controller->Session->write($this->_branchKey, $branches);
 		$this->_configSteps($this->_stepsAndBranches);
+		$this->_getExpectedStep();
 	}
 
 /**
