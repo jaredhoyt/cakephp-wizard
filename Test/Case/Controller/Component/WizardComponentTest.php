@@ -247,7 +247,7 @@ class WizardComponentTest extends CakeTestCase {
 		$this->assertEquals($expectedSteps, $resultSteps);
 		$this->assertEquals($expectedSteps, $this->Wizard->steps);
 		$expectedHelpers = array(
-			'Wizard.Wizard',
+			'Wizard.Wizard' => array('sessionRootKey' => 'Wizard'),
 		);
 		$this->assertEquals($expectedHelpers, $this->Wizard->controller->helpers);
 	}
@@ -290,6 +290,36 @@ class WizardComponentTest extends CakeTestCase {
 		$resultSteps = $this->Wizard->Session->read('Wizard.config.steps');
 		$this->assertEquals($expectedSteps, $resultSteps);
 		$this->assertEquals($expectedSteps, $this->Wizard->steps);
+	}
+
+	public function testStartupCustomRootSessionKey() {
+		$configAction = $this->Wizard->Session->read('WizardInstance001.config.action');
+		$this->assertEmpty($configAction);
+		$configSteps = $this->Wizard->Session->read('WizardInstance001.config.steps');
+		$this->assertEmpty($configSteps);
+		$this->assertEmpty($this->Wizard->controller->helpers);
+
+		$this->Wizard->sessionRootKey = 'WizardInstance001';
+		$this->Wizard->startup($this->Controller);
+
+		$expectedAction = 'wizard';
+		$resultAction = $this->Wizard->Session->read('WizardInstance001.config.action');
+		$this->assertEquals($expectedAction, $resultAction);
+		$expectedSteps = array(
+			'step1',
+			'step2',
+			'gender',
+			'step3',
+			'step4',
+			'confirmation',
+		);
+		$resultSteps = $this->Wizard->Session->read('WizardInstance001.config.steps');
+		$this->assertEquals($expectedSteps, $resultSteps);
+		$this->assertEquals($expectedSteps, $this->Wizard->steps);
+		$expectedHelpers = array(
+			'Wizard.Wizard' => array('sessionRootKey' => 'WizardInstance001'),
+		);
+		$this->assertEquals($expectedHelpers, $this->Wizard->controller->helpers);
 	}
 
 	public function testProcessStepOneGet() {
@@ -616,6 +646,62 @@ class WizardComponentTest extends CakeTestCase {
 				'action' => 'wizard',
 				'expectedStep' => 'confirmation',
 				'activeStep' => 'confirmation',
+			),
+		);
+		$resultSession = $this->Wizard->Session->read('Wizard');
+		$this->assertEquals($expectedSession, $resultSession);
+	}
+
+	public function testRedirectPersistUrlParams() {
+		$session = $this->Wizard->Session->read('Wizard');
+		$this->assertEmpty($session);
+
+		$url = '/wizard_test/wizard/step1/123/key:value?x=7&y=9';
+		$CakeRequest = new CakeRequest($url, true);
+		$CakeRequest->addParams(Router::parse($url));
+		$CakeResponse = $this->getMock('CakeResponse', array('send'));
+		$this->Controller = new WizardTestController($CakeRequest, $CakeResponse);
+		$this->Controller->components['Wizard.Wizard']['persistUrlParams'] = true;
+		$ComponentCollection = new ComponentCollection();
+		$ComponentCollection->init($this->Controller);
+		$this->Controller->Components->init($this->Controller);
+		$this->Wizard = $this->Controller->Wizard;
+		$this->Wizard->initialize($this->Controller);
+
+		$this->Wizard->startup($this->Controller);
+		//$this->Wizard->persistUrlParams = true;
+		// Emulate GET request to set session variables.
+		$this->Wizard->process('step1');
+		// Emulate POST request.
+		$postData = array(
+			'User' => array(
+				'username' => 'admin',
+				'password' => 'pass',
+			),
+		);
+		$this->Wizard->controller->request->data = $postData;
+		$CakeResponse = $this->Wizard->process('step1');
+
+		$this->assertInstanceOf('CakeResponse', $CakeResponse);
+		$headers = $CakeResponse->header();
+		$this->assertContains('/wizard_test/wizard/step2/123/key:value?x=7&y=9', $headers['Location']);
+
+		$expectedSession = array(
+			'config' => array(
+				'steps' => array(
+					'step1',
+					'step2',
+					'gender',
+					'step3',
+					'step4',
+					'confirmation',
+				),
+				'action' => 'wizard',
+				'expectedStep' => 'step2',
+				'activeStep' => 'step1',
+			),
+			'WizardTest' => array(
+				'step1' => $postData,
 			),
 		);
 		$resultSession = $this->Wizard->Session->read('Wizard');

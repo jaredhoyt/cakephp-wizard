@@ -122,6 +122,14 @@ class WizardComponent extends Component {
 	public $draftUrl = '/';
 
 /**
+ * If `true` then URL parameters from the first step will be present in the URLs
+ * of all other steps.
+ *
+ * @var bool
+ */
+	public $persistUrlParams = false;
+
+/**
  * If true, the first "non-skipped" branch in a group will be used if a branch has
  * not been included specifically.
  *
@@ -155,6 +163,13 @@ class WizardComponent extends Component {
  * @access public
  */
 	public $nestedViews = false;
+
+/**
+ * Holds the root of the session key for data storage.
+ *
+ * @var string
+ */
+	public $sessionRootKey = 'Wizard';
 
 /**
  * Other components used.
@@ -215,14 +230,23 @@ class WizardComponent extends Component {
  */
 	public function initialize(Controller $controller) {
 		$this->controller = $controller;
-		if ($this->controller->Session->check('Wizard.complete')) {
-			$this->_sessionKey = 'Wizard.complete';
-		} else {
-			$this->_sessionKey = 'Wizard.' . $controller->name;
-		}
-		$this->_configKey = 'Wizard.config';
-		$this->_branchKey = 'Wizard.branches.' . $controller->name;
+		$this->__setSessionKeys();
 		$this->_stepsAndBranches = $this->steps;
+	}
+
+/**
+ * Sets session keys used by this component.
+ *
+ * @return void
+ */
+	private function __setSessionKeys() {
+		if ($this->controller->Session->check($this->sessionRootKey . '.complete')) {
+			$this->_sessionKey = $this->sessionRootKey . '.complete';
+		} else {
+			$this->_sessionKey = $this->sessionRootKey . '.' . $this->controller->name;
+		}
+		$this->_configKey = $this->sessionRootKey . '.config';
+		$this->_branchKey = $this->sessionRootKey . '.branches.' . $this->controller->name;
 	}
 
 /**
@@ -235,10 +259,13 @@ class WizardComponent extends Component {
  * @return void
  */
 	public function startup(Controller $controller) {
+		$this->__setSessionKeys();
 		$this->config('action', $this->action);
 		$this->_configSteps($this->steps);
 		if (!in_array('Wizard.Wizard', $this->controller->helpers) && !array_key_exists('Wizard.Wizard', $this->controller->helpers)) {
-			$this->controller->helpers[] = 'Wizard.Wizard';
+			$this->controller->helpers['Wizard.Wizard'] = array(
+				'sessionRootKey' => $this->sessionRootKey,
+			);
 		}
 	}
 
@@ -358,7 +385,7 @@ class WizardComponent extends Component {
 			return $this->controller->redirect($this->draftUrl);
 		}
 		if (empty($step)) {
-			if ($this->controller->Session->check('Wizard.complete')) {
+			if ($this->controller->Session->check($this->sessionRootKey . '.complete')) {
 				if (method_exists($this->controller, 'afterComplete')) {
 					$this->controller->afterComplete();
 				}
@@ -393,7 +420,7 @@ class WizardComponent extends Component {
 							}
 							return $this->redirect(current($this->steps));
 						} else {
-							$this->controller->Session->write('Wizard.complete', $this->read());
+							$this->controller->Session->write($this->sessionRootKey . '.complete', $this->read());
 							$this->reset();
 							return $this->controller->redirect(array('action' => $this->action));
 						}
@@ -575,11 +602,31 @@ class WizardComponent extends Component {
 		if ($step == null) {
 			$step = $this->_getExpectedStep();
 		}
-		$url = array(
-			'controller' => Inflector::underscore($this->controller->name),
-			'action' => $this->action,
-			$step
-		);
+		if ($this->persistUrlParams) {
+			$url = $this->controller->request->params;
+			$pass = $named = array();
+			if (isset($url['pass'])) {
+				$pass = $url['pass'];
+			}
+			if (isset($url['named'])) {
+				$named = $url['named'];
+			}
+			unset($url['pass'], $url['named'], $url['paging'], $url['models'],
+					$url['url'], $url['url'], $url['autoRender'], $url['bare'],
+					$url['requested'], $url['return'], $url['isAjax'], $url['_Token']);
+			$url = array_merge($url, $pass, $named);
+			$url['action'] = $this->action;
+			$url[0] = $step;
+			if (!empty($this->controller->request->query)) {
+				$url['?'] = $this->controller->request->query;
+			}
+		} else {
+			$url = array(
+				'controller' => Inflector::underscore($this->controller->name),
+				'action' => $this->action,
+				$step,
+			);
+		}
 		return $this->controller->redirect($url, $status, $exit);
 	}
 
