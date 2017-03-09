@@ -537,6 +537,9 @@ class WizardComponent extends Component {
  * @return void
  */
 	protected function _setCurrentStep($step) {
+		if (!in_array($step, $this->steps)) {
+			return;
+		}
 		$this->_currentStep = reset($this->steps);
 		while (current($this->steps) != $step) {
 			$this->_currentStep = next($this->steps);
