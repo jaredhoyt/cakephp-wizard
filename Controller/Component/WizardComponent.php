@@ -382,7 +382,7 @@ class WizardComponent extends Component {
 					} else {
 						throw new NotImplementedException(sprintf(__('Process Callback not found. Please create Controller::%s', $processCallback)));
 					}
-					if ($proceed) {
+					if ($proceed === true) {
 						$this->save();
 						if (isset($this->controller->request->data['SaveAndBack']) && prev($this->steps)) {
 							return $this->redirect(current($this->steps));
