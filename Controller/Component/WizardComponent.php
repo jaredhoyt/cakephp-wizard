@@ -377,6 +377,9 @@ class WizardComponent extends Component {
 					$processCallback = Inflector::variable('process_' . $this->_currentStep);
 					if (method_exists($this->controller, $processCallback)) {
 						$proceed = $this->controller->$processCallback();
+						if (!is_bool($proceed)) {
+							throw new NotImplementedException(sprintf(__('Process Callback Controller::%s should return boolean', $processCallback)));
+						}
 					} elseif ($this->autoValidate) {
 						$proceed = $this->_validateData();
 					} else {
