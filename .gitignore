@@ -1,2 +1,7 @@
 *~
 .DS_Store
+/.buildpath
+/.project
+/.settings/
+/vendor/
+/composer.lock

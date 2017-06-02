@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit encoding="utf-8">
+	<filter>
+		<whitelist>
+			<directory>Controller</directory>
+			<directory>Model</directory>
+			<directory>View</directory>
+			<exclude>
+				<directory>Cake</directory>
+				<directory>Composer</directory>
+				<directory>Test</directory>
+				<file>*Test.php</file>
+			</exclude>
+		</whitelist>
+	</filter>
+	<logging>
+		<log type="coverage-text" target="php://stdout" showUncoveredFiles="true" />
+		<log type="coverage-clover" target="coverage.xml" showUncoveredFiles="true"  />
+	</logging>
+</phpunit>
