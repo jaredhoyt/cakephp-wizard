@@ -404,6 +404,9 @@ class WizardComponent extends Component {
 					$processCallback = Inflector::variable('process_' . $this->_currentStep);
 					if (method_exists($this->controller, $processCallback)) {
 						$proceed = $this->controller->$processCallback();
+						if (!is_bool($proceed)) {
+							throw new NotImplementedException(sprintf(__('Process Callback Controller::%s should return boolean', $processCallback)));
+						}
 					} elseif ($this->autoValidate) {
 						$proceed = $this->_validateData();
 					} else {
@@ -606,23 +609,9 @@ class WizardComponent extends Component {
 			$step = $this->_getExpectedStep();
 		}
 		if ($this->persistUrlParams) {
-			$url = $this->controller->request->params;
-			$pass = $named = array();
-			if (isset($url['pass'])) {
-				$pass = $url['pass'];
-			}
-			if (isset($url['named'])) {
-				$named = $url['named'];
-			}
-			unset($url['pass'], $url['named'], $url['paging'], $url['models'],
-					$url['url'], $url['url'], $url['autoRender'], $url['bare'],
-					$url['requested'], $url['return'], $url['isAjax'], $url['_Token']);
-			$url = array_merge($url, $pass, $named);
+			$url = Router::reverseToArray($this->controller->request);
 			$url['action'] = $this->action;
 			$url[0] = $step;
-			if (!empty($this->controller->request->query)) {
-				$url['?'] = $this->controller->request->query;
-			}
 		} else {
 			$url = array(
 				'controller' => Inflector::underscore($this->controller->name),
